@@ -1,12 +1,14 @@
-[![npm](https://badgen.net/npm/v/i18next-node-mongo-backend)](https://www.npmjs.com/package/i18next-node-mongo-backend)
+[![npm](https://badgen.net/npm/v/i18next-node-mongo-backend?color=red)](https://www.npmjs.com/package/i18next-node-mongo-backend)
+[![npm downloads](https://badgen.net/npm/dt/i18next-node-mongo-backend)](https://www.npmjs.com/package/i18next-node-mongo-backend)
+[![license](https://badgen.net/npm/license/i18next-node-mongo-backend)](https://github.com/laodemalfatih/i18next-node-mongo-backend/blob/master/LICENSE)
 
 ## Forked from [i18next-node-mongo-backend](https://github.com/gian788/i18next-node-mongo-backend) with support for `mongodb@3.5.x` and some improvements
 
-<img src="assets/i18next.png" alt="I18next Logo" width="100"/><img src="assets/mongodb.png" alt="MongoDB Logo" width="350" style="margin-left: 15px;"/>
+<img src="assets/i18next.png" alt="I18next Logo" width="100"/><img src="assets/mongodb.png" alt="MongoDB Logo" width="350" style="margin-left: 25px;"/>
 
 # Introduction
 
-This is a i18next backend to be used node.js. It will load resources from a [mongoDB](https://www.mongodb.org) database.
+This is a [i18next](i18next.com) backend to be used node.js. It will load resources from a [MongoDB](https://www.mongodb.org) database.
 
 # Getting started
 
@@ -50,7 +52,7 @@ As with all modules you can either pass the constructor function (class) to the 
     // Example:
     auth: {
       username: 'root',
-      password: 'root
+      password: 'password'
     }
   }
 }
