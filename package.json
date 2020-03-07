@@ -1,0 +1,28 @@
+{
+  "name": "i18next-node-mongo-backend",
+  "version": "0.0.1",
+  "description": "i18next node.js backend layer for i18next using mongodb",
+  "keywords": [
+    "i18next",
+    "i18next-backend",
+    "mongodb"
+  ],
+  "bugs": {
+    "url": "https://github.com/laodemalfatih/i18next-node-mongo-backend/issues"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "mocha": "*",
+    "should": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/laodemalfatih/i18next-node-mongo-backend"
+  },
+  "author": {
+    "name": "Gianluca Pengo",
+    "url": "https://github.com/gian788"
+  },
+  "license": "MIT",
+  "main": "./lib/index.js"
+}
