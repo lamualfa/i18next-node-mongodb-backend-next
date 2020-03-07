@@ -2,8 +2,7 @@
 
 ## Forked from [i18next-node-mongo-backend](https://github.com/gian788/i18next-node-mongo-backend) with support for `mongodb@3.5.x` and some improvements
 
-<img src="assets/i18next.png" alt="I18next Logo" width="100"/>
-<img src="assets/mongodb.png" alt="MongoDB Logo" width="350" style="margin-left: 30px;"/>
+<img src="assets/i18next.png" alt="I18next Logo" width="100"/><img src="assets/mongodb.png" alt="MongoDB Logo" width="350" style="margin-left: 15px;"/>
 
 # Introduction
 
@@ -13,9 +12,11 @@ This is a i18next backend to be used node.js. It will load resources from a [mon
 
 Source can be loaded via [npm](https://www.npmjs.com/package/i18next-node-mongodb-backend).
 
+```bash
+npm install mongodb i18next-node-mongo-backend
 ```
-$ npm install i18next-node-mongo-backend
-```
+
+> Important: This library doesn't include `mongodb` library. You have to install it.
 
 Wiring up:
 
