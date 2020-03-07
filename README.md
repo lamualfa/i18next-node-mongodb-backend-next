@@ -1,4 +1,9 @@
-# Forked from [i18next-node-mongo-backend](https://github.com/gian788/i18next-node-mongo-backend) with support for `mongodb@3.5.x` and some improvements
+[![npm](https://badgen.net/npm/v/i18next-node-mongo-backend)](https://www.npmjs.com/package/i18next-node-mongo-backend)
+
+## Forked from [i18next-node-mongo-backend](https://github.com/gian788/i18next-node-mongo-backend) with support for `mongodb@3.5.x` and some improvements
+
+<img src="assets/i18next.png" alt="I18next Logo" width="100"/>
+<img src="assets/mongodb.png" alt="MongoDB Logo" width="350" style="margin-left: 30px;"/>
 
 # Introduction
 
