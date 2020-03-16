@@ -2,7 +2,7 @@
 [![npm downloads](https://badgen.net/npm/dt/i18next-node-mongo-backend)](https://www.npmjs.com/package/i18next-node-mongo-backend)
 [![license](https://badgen.net/npm/license/i18next-node-mongo-backend)](https://github.com/laodemalfatih/i18next-node-mongo-backend/blob/master/LICENSE)
 
-#### Inspired from [i18next-node-mongo-backend](https://github.com/gian788/i18next-node-mongo-backend) with support for `mongodb@3.5.x` and some bug fixes and more improvements
+#### Inspired from [i18next-node-mongodb-backend](https://github.com/gian788/i18next-node-mongodb-backend) with support for `mongodb@3.5.x`, some bug fixes and more improvements
 
 # Integrate [i18next](https://github.com/i18next/i18next) with [MongoDB](https://www.mongodb.com/)
 
@@ -22,13 +22,27 @@ yarn add mongodb i18next-node-mongo-backend
 
 > Important: This library doesn't include `mongodb` library. You have to install it yourself
 
+# Usage
+
+```js
+const i18next = require('i18next');
+const Backend = require('i18next-node-mongo-backend');
+
+i18next.use(Backend).init({
+  // Backend Options
+  backend: options
+});
+```
+
 # Backend Options
 
 ```js
 {
   // If you have your own MongoClient, put in here:
   // Note: If this has already been entered, the other MongoDB standard configurations will be ignored
-  client: new MongoClient(),
+  client: new MongoClient(), // work with connected client or not
+
+  // Or (Choose one)
 
   // MongoDB standard configuration
   host: '127.0.0.1',
@@ -61,15 +75,3 @@ yarn add mongodb i18next-node-mongo-backend
 ```
 
 > We do not provide `uri` options. You just fill out the available options, we will do it automatically for you
-
-# Usage
-
-```js
-const i18next = require('i18next');
-const Backend = require('i18next-node-mongo-backend');
-
-i18next.use(Backend).init({
-  // Backend Options
-  backend: options
-});
-```
