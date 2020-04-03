@@ -72,7 +72,7 @@ class Backend {
           }
         )
       )
-      .then(doc => cb(null, (doc && doc.data) || {}))
+      .then(doc => cb(null, (doc && doc[this.opts.dataFieldName]) || {}))
       .catch(this.opts.readErrorHandler);
   }
 
@@ -125,7 +125,7 @@ class Backend {
               },
               {
                 $set: {
-                  [`data.${key}`]: fallbackVal
+                  [`${this.opts.dataFieldName}.${key}`]: fallbackVal
                 }
               },
               {
@@ -141,7 +141,7 @@ class Backend {
   }
 }
 
-//https://www.i18next.com/misc/creating-own-plugins#make-sure-to-set-the-plugin-type
+// https://www.i18next.com/misc/creating-own-plugins#make-sure-to-set-the-plugin-type
 Backend.type = 'backend';
 
 module.exports = Backend;
