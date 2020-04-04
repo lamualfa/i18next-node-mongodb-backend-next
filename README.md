@@ -28,10 +28,12 @@ yarn add mongodb i18next-node-mongo-backend
 const i18next = require('i18next');
 const Backend = require('i18next-node-mongo-backend');
 
-i18next.use(Backend).init({
-  // Backend Options
-  backend: options
-});
+i18next
+  .use(Backend)
+  .init({
+    // Backend Options
+    backend: options
+  });
 ```
 
 # Backend Options
@@ -75,3 +77,15 @@ i18next.use(Backend).init({
 ```
 
 > We do not provide `uri` options. You just fill out the available options, we will do it automatically for you
+
+# Sample mongo document
+```js
+// Key name is according to provided in options
+{
+  "lang" : "en-US",
+  "ns" : "translations",
+  "data" : {
+    "key": "Thank you!"
+  }
+}
+```
