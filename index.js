@@ -72,7 +72,7 @@ class Backend {
           }
         )
       )
-      .then(doc => cb(null, (doc && doc.data) || {}))
+      .then(doc => cb(null, (doc && doc[this.opts.dataFieldName]) || {}))
       .catch(this.opts.readErrorHandler);
   }
 
@@ -125,7 +125,7 @@ class Backend {
               },
               {
                 $set: {
-                  [`data.${key}`]: fallbackVal
+                  [`${this.opts.dataFieldName}.${key}`]: fallbackVal
                 }
               },
               {
