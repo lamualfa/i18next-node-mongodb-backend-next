@@ -94,7 +94,7 @@ i18next
 
 ## Example Backend Options
 
-### Connect with `uri`:
+#### Connect with `uri`:
 ```js
 {
   uri: 'mongodb://localhost:27017/test',
@@ -102,7 +102,7 @@ i18next
 }
 ```
 
-### Connect with `host` and `port`:
+#### Connect with `host` and `port`:
 ```js
 {
   host: 'localhost',
@@ -111,7 +111,7 @@ i18next
 }
 ```
 
-### Connect with `MongoClient` instance _(if you already have your own connection, use this to avoid useless connections)_:
+#### Connect with `MongoClient` instance _(if you already have your own connection, use this to avoid useless connections)_:
 ```js
 {
   host: 'localhost',
@@ -136,7 +136,7 @@ i18next
 
 # Change Log:
 
-### v0.0.3:
+### v0.0.3 (06-04-2020):
   - Add testing code with [Jest](https://jestjs.io/)
   - Add [JSDOC](https://jsdoc.app/)
   - Add support for the `uri` option
