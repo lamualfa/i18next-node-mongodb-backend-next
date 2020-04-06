@@ -87,6 +87,18 @@ afterAll(async () => {
   await client.close();
 });
 
+it('Remove MongoDB special character', () => {
+  const backend = new Backend(null, {
+    languageFieldName: 'fie.ld',
+    namespaceFieldName: '$ns',
+    dataFieldName: '$da.ta',
+  });
+
+  expect(backend.opts.languageFieldName).toBe('field');
+  expect(backend.opts.namespaceFieldName).toBe('ns');
+  expect(backend.opts.dataFieldName).toBe('data');
+});
+
 describe('with custom MongoClient', () => {
   const backend = new Backend(null, {
     client,

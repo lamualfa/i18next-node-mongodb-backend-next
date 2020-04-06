@@ -18,6 +18,9 @@
   "bugs": {
     "url": "https://github.com/laodemalfatih/i18next-node-mongo-backend/issues"
   },
+  "engines": {
+    "node": ">=10"
+  },
   "scripts": {
     "test": "jest && codecov",
     "test:dev": "jest --verbose false"

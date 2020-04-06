@@ -1,6 +1,9 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { MongoClient } = require('mongodb');
 
+// Remove MongoDB special character. See https://jira.mongodb.org/browse/SERVER-3229?focusedCommentId=36821&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-36821
+const MONGODB_SPECIAL_CHARACTER_REGEX = /^\$|\./g;
+
 const defaultOpts = {
   host: '127.0.0.1',
   port: 27017,
@@ -8,6 +11,7 @@ const defaultOpts = {
   languageFieldName: 'lang',
   namespaceFieldName: 'ns',
   dataFieldName: 'data',
+  filterFieldNameCharacter: true,
   persistConnection: false,
   // eslint-disable-next-line no-console
   readOnError: console.error,
@@ -26,6 +30,7 @@ class Backend {
   /**
    * @param {*} services `i18next.services`
    * @param {object} opts Backend Options
+   * @param {string} [opts.uri] MongoDB Uri
    * @param {string} [opts.host="127.0.0.1"] MongoDB Host
    * @param {number} [opts.port=27017] MongoDB Port
    * @param {string} [opts.user] MongoDB User
@@ -35,6 +40,7 @@ class Backend {
    * @param {string} [opts.languageFieldName="lang"] Field name for language attribute
    * @param {string} [opts.namespaceFieldName="ns"] Field name for namespace attribute
    * @param {string} [opts.dataFieldName="data"] Field name for data attribute
+   * @param {boolean} [opts.filterFieldNameCharacter=true] Remove MongoDB special character (contains ".", or starts with "$"). See https://jira.mongodb.org/browse/SERVER-3229
    * @param {boolean} [opts.persistConnection=false] If false, then the database connection will be closed every time the i18next event completes
    * @param {MongoClient} [opts.client] Custom `MongoClient` instance
    * @param {function} [opts.readOnError] Error handler for `read` process
@@ -59,7 +65,9 @@ class Backend {
             password: this.opts.password,
           };
 
-        this.uri = `mongodb://${this.opts.host}:${this.opts.port}/${this.opts.dbName}`;
+        this.uri =
+          this.opts.uri ||
+          `mongodb://${this.opts.host}:${this.opts.port}/${this.opts.dbName}`;
         this.client = new MongoClient(this.uri, this.opts.mongodb);
       }
     }
@@ -82,13 +90,28 @@ class Backend {
     return prevParam;
   }
 
-  // i18next methods
+  // i18next required methods
 
   init(services, opts, i18nOpts) {
     this.services = services;
 
     this.i18nOpts = i18nOpts;
     this.opts = { ...defaultOpts, ...this.options, ...opts };
+
+    if (this.opts.filterFieldNameCharacter) {
+      this.opts.languageFieldName = this.opts.languageFieldName.replace(
+        MONGODB_SPECIAL_CHARACTER_REGEX,
+        '',
+      );
+      this.opts.namespaceFieldName = this.opts.namespaceFieldName.replace(
+        MONGODB_SPECIAL_CHARACTER_REGEX,
+        '',
+      );
+      this.opts.dataFieldName = this.opts.dataFieldName.replace(
+        MONGODB_SPECIAL_CHARACTER_REGEX,
+        '',
+      );
+    }
   }
 
   read(lang, ns, cb) {

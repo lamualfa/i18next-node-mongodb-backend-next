@@ -1,10 +1,10 @@
-[![Build Status](https://travis-ci.com/laodemalfatih/i18next-node-mongo-backend.svg?branch=v0.0.3-dev)](https://travis-ci.com/laodemalfatih/i18next-node-mongo-backend)
-[![Maintainability](https://api.codeclimate.com/v1/badges/5fc60912b2776f1e1a53/maintainability)](https://codeclimate.com/github/laodemalfatih/i18next-node-mongo-backend/maintainability)
-[![codecov](https://codecov.io/gh/laodemalfatih/i18next-node-mongo-backend/branch/master/graph/badge.svg)](https://codecov.io/gh/laodemalfatih/i18next-node-mongo-backend)
-
 [![npm](https://badgen.net/npm/v/i18next-node-mongo-backend?color=red)](https://www.npmjs.com/package/i18next-node-mongo-backend)
-[![npm downloads](https://badgen.net/npm/dt/i18next-node-mongo-backend)](https://www.npmjs.com/package/i18next-node-mongo-backend)
 [![license](https://badgen.net/npm/license/i18next-node-mongo-backend)](https://github.com/laodemalfatih/i18next-node-mongo-backend/blob/master/LICENSE)
+
+[![Build Status](https://travis-ci.com/laodemalfatih/i18next-node-mongo-backend.svg?branch=v0.0.3-dev)](https://travis-ci.com/laodemalfatih/i18next-node-mongo-backend)
+[![codecov](https://codecov.io/gh/laodemalfatih/i18next-node-mongo-backend/branch/master/graph/badge.svg)](https://codecov.io/gh/laodemalfatih/i18next-node-mongo-backend)
+[![Maintainability](https://api.codeclimate.com/v1/badges/5fc60912b2776f1e1a53/maintainability)](https://codeclimate.com/github/laodemalfatih/i18next-node-mongo-backend/maintainability)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
 #### Inspired from [i18next-node-mongodb-backend](https://github.com/gian788/i18next-node-mongodb-backend) with support for `mongodb@3.5.x` and some bug fixes and more improvements
 
@@ -44,30 +44,38 @@ i18next
 
 ```js
 {
-  // Required field
+  // Database Name
+  dbName: '<DB Name>', // Required
 
-  dbName: '<DB Name>',
-  // Collection name in database will be used to store i18next data
-  collectionName: 'i18n',
+  // MongoDB Uri
+  uri: 'mongodb://localhost:27017',
+
+  // Or
+
+   // MongoDB standard configuration
+  host: '127.0.0.1',
+  port: 27017,
+
+  // Or
 
   // If you have your own `MongoClient`, put in here:
   // Note: If this has already been entered, the other MongoDB configurations will be ignored
   client: new MongoClient(), // work with connected client or not
 
-  // Or (Choose one)
-
-  // MongoDB standard configuration
-  host: '127.0.0.1',
-  port: 27017,
-
   // MongoDB authentication. Remove it if not needed
   user: '<User>',
   password: '<Password>',
+
+  // Collection name in database will be used to store i18next data
+  collectionName: 'i18n',
 
   // MongoDB field name
   languageFieldName: 'lang',
   namespaceFieldName: 'ns',
   dataFieldName: 'data',
+
+  // Remove MongoDB special character from field name. See https://jira.mongodb.org/browse/SERVER-3229
+  filterFieldNameCharacter: true,
 
   // If false, then the database connection will be closed every time the i18next event completes
   persistConnection: false,
@@ -84,7 +92,35 @@ i18next
 };
 ```
 
-> We do not provide `uri` options. You just fill out the available options, we will do it automatically for you
+## Example Backend Options
+
+### Connect with `uri`:
+```js
+{
+  uri: 'mongodb://localhost:27017/test',
+  dbName: 'test' // Required field
+}
+```
+
+### Connect with `host` and `port`:
+```js
+{
+  host: 'localhost',
+  port: 27017,
+  dbName: 'test' // Required field
+}
+```
+
+### Connect with `MongoClient` instance _(if you already have your own connection, use this to avoid useless connections)_:
+```js
+{
+  host: 'localhost',
+  port: 27017,
+  dbName: 'test', // Required field
+  // [IMPORTANT] Set to true to avoid closing connection with Backend
+  persistConnection: true
+}
+```
 
 ## Example of the MongoDB document that will be created:
 ```json
@@ -100,8 +136,9 @@ i18next
 
 # Change Log:
 
-## v0.0.3:
-
-  - Add testing with [Jest](https://jestjs.io/)
+### v0.0.3:
+  - Add testing code with [Jest](https://jestjs.io/)
   - Add [JSDOC](https://jsdoc.app/)
+  - Add support for the `uri` option
+  - Add `filterFieldNameCharacter: true` option
   - Some improvements
