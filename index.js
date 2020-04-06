@@ -57,19 +57,13 @@ class Backend {
 
   async getCollection() {
     if (!this.client) {
-      if (this.opts.client) this.client = this.opts.client;
-      else {
-        if (this.opts.user && this.opts.password)
-          this.opts.mongodb.auth = {
-            user: this.opts.user,
-            password: this.opts.password,
-          };
-
-        this.uri =
-          this.opts.uri ||
-          `mongodb://${this.opts.host}:${this.opts.port}/${this.opts.dbName}`;
-        this.client = new MongoClient(this.uri, this.opts.mongodb);
-      }
+      this.client = this.opts.client
+        ? this.opts.client
+        : new MongoClient(
+            this.opts.uri ||
+              `mongodb://${this.opts.host}:${this.opts.port}/${this.opts.dbName}`,
+            this.opts.mongodb,
+          );
     }
 
     if (!this.client.isConnected()) await this.client.connect();
@@ -81,13 +75,10 @@ class Backend {
     return collection;
   }
 
-  async closeIfPersistConnection(prevParam) {
-    if (!this.opts.persistConnection && this.client.isConnected()) {
-      await this.client.close();
-      delete this.client;
-    }
+  async closeConnection() {
+    if (this.client.isConnected()) await this.client.close();
 
-    return prevParam;
+    delete this.client;
   }
 
   // i18next required methods
@@ -112,14 +103,20 @@ class Backend {
         '',
       );
     }
+
+    if (this.opts.user && this.opts.password)
+      this.opts.mongodb.auth = {
+        user: this.opts.user,
+        password: this.opts.password,
+      };
   }
 
   read(lang, ns, cb) {
     if (!cb) return;
 
     this.getCollection()
-      .then((col) =>
-        col.findOne(
+      .then(async (col) => {
+        const doc = await col.findOne(
           {
             [this.opts.languageFieldName]: lang,
             [this.opts.namespaceFieldName]: ns,
@@ -127,10 +124,11 @@ class Backend {
           {
             [this.opts.dataFieldName]: true,
           },
-        ),
-      )
-      .then((prevParam) => this.closeIfPersistConnection(prevParam))
-      .then((doc) => cb(null, (doc && doc[this.opts.dataFieldName]) || {}))
+        );
+
+        if (!this.opts.persistConnection) await this.closeConnection();
+        cb(null, (doc && doc[this.opts.dataFieldName]) || {});
+      })
       .catch(this.opts.readOnError);
   }
 
@@ -138,16 +136,14 @@ class Backend {
     if (!cb) return;
 
     this.getCollection()
-      .then((col) =>
-        col
+      .then(async (col) => {
+        const docs = await col
           .find({
             [this.opts.languageFieldName]: { $in: langs },
             [this.opts.namespaceFieldName]: { $in: nss },
           })
+          .toArray();
 
-          .toArray(),
-      )
-      .then((docs) => {
         const parsed = {};
 
         for (let i = 0; i < docs.length; i += 1) {
@@ -163,10 +159,9 @@ class Backend {
           parsed[lang][ns] = data;
         }
 
-        return parsed;
+        if (!this.opts.persistConnection) await this.closeConnection();
+        cb(null, parsed);
       })
-      .then((prevParam) => this.closeIfPersistConnection(prevParam))
-      .then((parsed) => cb(null, parsed))
       .catch(this.opts.readMultiOnError);
   }
 
@@ -174,10 +169,10 @@ class Backend {
     const parsedLangs = typeof langs === 'string' ? [langs] : langs;
 
     this.getCollection()
-      .then((col) => {
+      .then(async (col) => {
         const updateTasks = [];
 
-        for (let i = 0; i < parsedLangs.length; i += 1) {
+        for (let i = 0; i < parsedLangs.length; i += 1)
           updateTasks.push(
             col.updateOne(
               {
@@ -194,13 +189,12 @@ class Backend {
               },
             ),
           );
-        }
 
-        return Promise.all(updateTasks);
+        await Promise.all(updateTasks);
+        if (!this.opts.persistConnection) await this.closeConnection();
+
+        if (cb) cb();
       })
-      .then(() => this.closeIfPersistConnection())
-      // Call cb if exists
-      .then(() => cb && cb())
       .catch(this.opts.createOnError);
   }
 }
