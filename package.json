@@ -26,7 +26,6 @@
     "test:dev": "jest --verbose false"
   },
   "dependencies": {
-    "deep-extend": "^0.6.0",
     "xtend": "^4.0.2"
   },
   "repository": {
