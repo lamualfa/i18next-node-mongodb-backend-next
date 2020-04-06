@@ -136,9 +136,9 @@ i18next
 
 # Change Log:
 
-### v0.0.3 (06-04-2020):
+### v0.0.3 _(06-04-2020)_:
   - Add testing code with [Jest](https://jestjs.io/)
   - Add [JSDOC](https://jsdoc.app/)
   - Add support for the `uri` option
-  - Add `filterFieldNameCharacter: true` option
+  - Add `filterFieldNameCharacter` option
   - Some improvements
