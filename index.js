@@ -166,17 +166,13 @@ class Backend {
   }
 
   create(langs, ns, key, fallbackVal, cb) {
-    const parsedLangs = typeof langs === 'string' ? [langs] : langs;
-
     this.getCollection()
       .then(async (col) => {
-        const updateTasks = [];
-
-        for (let i = 0; i < parsedLangs.length; i += 1)
-          updateTasks.push(
+        await Promise.all(
+          (typeof langs === 'string' ? [langs] : langs).map((lang) =>
             col.updateOne(
               {
-                [this.opts.languageFieldName]: parsedLangs[i],
+                [this.opts.languageFieldName]: lang,
                 [this.opts.namespaceFieldName]: ns,
               },
               {
@@ -188,9 +184,8 @@ class Backend {
                 upsert: true,
               },
             ),
-          );
-
-        await Promise.all(updateTasks);
+          ),
+        );
         if (!this.opts.persistConnection) await this.closeConnection();
 
         if (cb) cb();

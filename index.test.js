@@ -39,6 +39,15 @@ const client = new MongoClient(`mongodb://${host}:${port}/${dbName}`, {
   },
 });
 
+function asyncify(backend, method, ...params) {
+  return new Promise((resolve, reject) =>
+    backend[method](...params, (err, res) => {
+      if (err) reject(err);
+      else resolve(res);
+    }),
+  );
+}
+
 function basicTest(backend) {
   it('valid read result', async () => {
     for (let i = 0; i < translations.length; i += 1) {
@@ -46,15 +55,11 @@ function basicTest(backend) {
 
       expect(
         // eslint-disable-next-line no-await-in-loop
-        await new Promise((resolve, reject) =>
-          backend.read(
-            translation[languageFieldName],
-            translation[namespaceFieldName],
-            (err, res) => {
-              if (err) reject(err);
-              else resolve(res);
-            },
-          ),
+        await asyncify(
+          backend,
+          'read',
+          translation[languageFieldName],
+          translation[namespaceFieldName],
         ),
       ).toEqual(translation[dataFieldName]);
     }
@@ -65,32 +70,24 @@ function basicTest(backend) {
     const nss = [];
     const expectResult = {};
 
-    for (let i = 0; i < translations.length; i += 1) {
-      const translation = translations[i];
-
+    translations.forEach((translation) => {
       const lang = translation[languageFieldName];
       const ns = translation[namespaceFieldName];
 
       if (langs.indexOf(lang) === -1) langs.push(lang);
       if (nss.indexOf(ns) === -1) nss.push(ns);
 
-      if (expectResult[lang]) {
+      if (expectResult[lang])
         expectResult[lang][ns] = translation[dataFieldName];
-      } else {
+      else
         expectResult[lang] = {
           [ns]: translation[dataFieldName],
         };
-      }
-    }
+    });
 
     expect(
       // eslint-disable-next-line no-await-in-loop
-      await new Promise((resolve, reject) =>
-        backend.readMulti(langs, nss, (err, res) => {
-          if (err) reject(err);
-          else resolve(res);
-        }),
-      ),
+      await asyncify(backend, 'readMulti', langs, nss),
     ).toEqual(expectResult);
   });
 
@@ -100,21 +97,9 @@ function basicTest(backend) {
     const testKey = 'key';
     const testVal = 'hola mundo';
 
-    await new Promise((resolve, reject) => {
-      backend.create(testLang, testNs, testKey, testVal, (err) => {
-        if (err) reject(err);
-        else resolve();
-      });
-    });
+    await asyncify(backend, 'create', testLang, testNs, testKey, testVal);
 
-    expect(
-      await new Promise((resolve, reject) =>
-        backend.read(testLang, testNs, (err, res) => {
-          if (err) reject(err);
-          else resolve(res);
-        }),
-      ),
-    ).toEqual({
+    expect(await asyncify(backend, 'read', testLang, testNs)).toEqual({
       [testKey]: testVal,
     });
   });
