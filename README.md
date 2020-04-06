@@ -1,23 +1,27 @@
 [![npm](https://badgen.net/npm/v/i18next-node-mongo-backend?color=red)](https://www.npmjs.com/package/i18next-node-mongo-backend)
-[![npm downloads](https://badgen.net/npm/dt/i18next-node-mongo-backend)](https://www.npmjs.com/package/i18next-node-mongo-backend)
 [![license](https://badgen.net/npm/license/i18next-node-mongo-backend)](https://github.com/laodemalfatih/i18next-node-mongo-backend/blob/master/LICENSE)
 
-#### Inspired from [i18next-node-mongodb-backend](https://github.com/gian788/i18next-node-mongodb-backend) with support for `mongodb@3.5.x`, some bug fixes and more improvements
+[![Build Status](https://travis-ci.com/laodemalfatih/i18next-node-mongo-backend.svg?branch=v0.0.3-dev)](https://travis-ci.com/laodemalfatih/i18next-node-mongo-backend)
+[![codecov](https://codecov.io/gh/laodemalfatih/i18next-node-mongo-backend/branch/master/graph/badge.svg)](https://codecov.io/gh/laodemalfatih/i18next-node-mongo-backend)
+[![Maintainability](https://api.codeclimate.com/v1/badges/5fc60912b2776f1e1a53/maintainability)](https://codeclimate.com/github/laodemalfatih/i18next-node-mongo-backend/maintainability)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+
+#### Inspired from [i18next-node-mongodb-backend](https://github.com/gian788/i18next-node-mongodb-backend) with support for `mongodb@3.5.x` and some bug fixes and more improvements
 
 # Integrate [i18next](https://github.com/i18next/i18next) with [MongoDB](https://www.mongodb.com/)
 
-<img src="assets/i18next.png" alt="I18next Logo" width="100"/><img src="assets/mongodb.png" alt="MongoDB Logo" width="350" style="margin-left: 30px;"/>
+<img src="assets/i18next.png" alt="I18next Logo" width="100"/><img src="assets/mongodb.png" alt="MongoDB Logo" width="330" style="margin-left: 25px;"/>
 
 # Introduction
 
-This is a [i18next](https://github.com/i18next/i18next) backend to be used node.js. It will load resources from a [MongoDB](https://www.mongodb.org) database with official node mongodb [driver](https://mongodb.github.io/node-mongodb-native/3.5/).
+This is a [i18next](https://github.com/i18next/i18next) backend to be used Node JS. It will load resources from a [MongoDB](https://www.mongodb.org) database with official node mongodb [driver](https://mongodb.github.io/node-mongodb-native/3.5/).
 
 # Getting started
 
 ```bash
-npm install mongodb i18next-node-mongo-backend
-# or
 yarn add mongodb i18next-node-mongo-backend
+# or
+npm install mongodb i18next-node-mongo-backend
 ```
 
 > Important: This library doesn't include `mongodb` library. You have to install it yourself
@@ -40,16 +44,23 @@ i18next
 
 ```js
 {
-  // If you have your own MongoClient, put in here:
-  // Note: If this has already been entered, the other MongoDB standard configurations will be ignored
-  client: new MongoClient(), // work with connected client or not
+  // Database Name
+  dbName: '<DB Name>', // Required
 
-  // Or (Choose one)
+  // MongoDB Uri
+  uri: 'mongodb://localhost:27017',
 
-  // MongoDB standard configuration
+  // Or
+
+   // MongoDB standard configuration
   host: '127.0.0.1',
   port: 27017,
-  dbName: '<DB Name>',
+
+  // Or
+
+  // If you have your own `MongoClient`, put in here:
+  // Note: If this has already been entered, the other MongoDB configurations will be ignored
+  client: new MongoClient(), // work with connected client or not
 
   // MongoDB authentication. Remove it if not needed
   user: '<User>',
@@ -63,23 +74,56 @@ i18next
   namespaceFieldName: 'ns',
   dataFieldName: 'data',
 
+  // Remove MongoDB special character from field name. See https://jira.mongodb.org/browse/SERVER-3229
+  filterFieldNameCharacter: true,
+
+  // If false, then the database connection will be closed every time the i18next event completes
+  persistConnection: false,
+
   // Error handlers
-  readErrorHandler: console.error,
-  readMultiErrorHandler: console.error,
-  createErrorHandler: console.error,
+  readOnError: console.error,
+  readMultiOnError: console.error,
+  createOnError: console.error,
 
   // MongoClient Options. See https://mongodb.github.io/node-mongodb-native/3.5/api/MongoClient.html
   mongodb: {
-    auto_reconnect: true,
     useUnifiedTopology: true
   }
 };
 ```
 
-> We do not provide `uri` options. You just fill out the available options, we will do it automatically for you
+## Example Backend Options
 
-# Sample mongo document
+#### Connect with `uri`:
 ```js
+{
+  uri: 'mongodb://localhost:27017/test',
+  dbName: 'test' // Required field
+}
+```
+
+#### Connect with `host` and `port`:
+```js
+{
+  host: 'localhost',
+  port: 27017,
+  dbName: 'test' // Required field
+}
+```
+
+#### Connect with `MongoClient` instance _(if you already have your own connection, use this to avoid useless connections)_:
+```js
+{
+  host: 'localhost',
+  port: 27017,
+  dbName: 'test', // Required field
+  // [IMPORTANT] Set to true to avoid closing connection with Backend
+  persistConnection: true
+}
+```
+
+## Example of the MongoDB document that will be created:
+```json
 // Key name is according to provided in options
 {
   "lang" : "en-US",
@@ -89,3 +133,12 @@ i18next
   }
 }
 ```
+
+# Change Log:
+
+### v0.0.3 (06-04-2020):
+  - Add testing code with [Jest](https://jestjs.io/)
+  - Add [JSDOC](https://jsdoc.app/)
+  - Add support for the `uri` option
+  - Add `filterFieldNameCharacter: true` option
+  - Some improvements

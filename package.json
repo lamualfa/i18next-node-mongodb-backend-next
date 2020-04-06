@@ -1,6 +1,6 @@
 {
   "name": "i18next-node-mongo-backend",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "MIT",
   "description": "Use i18next with mongodb as backend",
   "main": "./index.js",
@@ -18,11 +18,31 @@
   "bugs": {
     "url": "https://github.com/laodemalfatih/i18next-node-mongo-backend/issues"
   },
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "test": "jest && codecov",
+    "test:dev": "jest --verbose false"
+  },
   "dependencies": {
-    "deep-extend": "^0.6.0"
+    "deep-extend": "^0.6.0",
+    "xtend": "^4.0.2"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/laodemalfatih/i18next-node-mongo-backend.git"
+  },
+  "devDependencies": {
+    "codecov": "^3.6.5",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-config-prettier": "^6.10.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-jest": "^23.8.2",
+    "eslint-plugin-prettier": "^3.1.2",
+    "jest": "^25.2.7",
+    "mongodb": "^3.5.5",
+    "prettier": "^2.0.2"
   }
 }
