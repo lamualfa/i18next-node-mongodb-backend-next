@@ -1,0 +1,272 @@
+const { MongoClient } = require('mongodb');
+
+const Backend = require('./index');
+
+const host = '127.0.0.1';
+const port = 27017;
+const user = 'test';
+const password = 'test';
+const dbName = 'test';
+const collectionName = 'i18n';
+
+// Use custom
+const languageFieldName = 'lng';
+const namespaceFieldName = 'nas';
+const dataFieldName = 'dat';
+
+const translations = [
+  {
+    [languageFieldName]: 'en',
+    [namespaceFieldName]: 'translation',
+    [dataFieldName]: {
+      key: 'Hello world',
+    },
+  },
+  {
+    [languageFieldName]: 'id',
+    [namespaceFieldName]: 'translation',
+    [dataFieldName]: {
+      key: 'Halo dunia',
+    },
+  },
+];
+
+const client = new MongoClient(`mongodb://${host}:${port}/${dbName}`, {
+  useUnifiedTopology: true,
+  auth: {
+    user,
+    password,
+  },
+});
+
+async function emptyCollection() {
+  await client.db(dbName).collection(collectionName).deleteMany({});
+}
+
+beforeAll(async () => {
+  await client.connect();
+  await client.db(dbName).createCollection(collectionName);
+  await emptyCollection();
+});
+
+beforeEach(async () => {
+  const updateTasks = [];
+
+  const collection = await client.db(dbName).collection(collectionName);
+
+  for (let i = 0; i < translations.length; i += 1) {
+    const translation = translations[i];
+
+    updateTasks.push(
+      collection.updateOne(
+        {
+          [languageFieldName]: translation[languageFieldName],
+          [namespaceFieldName]: translation[namespaceFieldName],
+        },
+        {
+          $set: {
+            [dataFieldName]: translation[dataFieldName],
+          },
+        },
+        {
+          upsert: true,
+        },
+      ),
+    );
+  }
+
+  await Promise.all(updateTasks);
+});
+
+afterEach(async () => {
+  // await emptyCollection();
+});
+
+afterAll(async () => {
+  // await client.db(dbName).dropCollection(collectionName);
+  await client.close();
+});
+
+describe('with custom MongoClient', () => {
+  const backend = new Backend(null, {
+    client,
+    dbName,
+    collectionName,
+    languageFieldName,
+    namespaceFieldName,
+    dataFieldName,
+    persistConnection: true,
+  });
+
+  it('valid read result', async () => {
+    for (let i = 0; i < translations.length; i += 1) {
+      const translation = translations[i];
+
+      expect(
+        // eslint-disable-next-line no-await-in-loop
+        await new Promise((resolve, reject) =>
+          backend.read(
+            translation[languageFieldName],
+            translation[namespaceFieldName],
+            (err, res) => {
+              if (err) reject(err);
+              else resolve(res);
+            },
+          ),
+        ),
+      ).toEqual(translation[dataFieldName]);
+    }
+  });
+
+  it('valid readMulti result', async () => {
+    const langs = [];
+    const nss = [];
+    const expectResult = {};
+
+    for (let i = 0; i < translations.length; i += 1) {
+      const translation = translations[i];
+
+      const lang = translation[languageFieldName];
+      const ns = translation[namespaceFieldName];
+
+      if (langs.indexOf(lang) === -1) langs.push(lang);
+      if (nss.indexOf(ns) === -1) nss.push(ns);
+
+      if (expectResult[lang]) {
+        expectResult[lang][ns] = translation[dataFieldName];
+      } else {
+        expectResult[lang] = {
+          [ns]: translation[dataFieldName],
+        };
+      }
+    }
+
+    expect(
+      // eslint-disable-next-line no-await-in-loop
+      await new Promise((resolve, reject) =>
+        backend.readMulti(langs, nss, (err, res) => {
+          if (err) reject(err);
+          else resolve(res);
+        }),
+      ),
+    ).toEqual(expectResult);
+  });
+
+  it('valid create new document', async () => {
+    const testNs = 'translation';
+    const testLang = 'es';
+    const testKey = 'key';
+    const testVal = 'hola mundo';
+
+    await new Promise((resolve, reject) => {
+      backend.create(testLang, testNs, testKey, testVal, (err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
+
+    expect(
+      await new Promise((resolve, reject) =>
+        backend.read(testLang, testNs, (err, res) => {
+          if (err) reject(err);
+          else resolve(res);
+        }),
+      ),
+    ).toEqual({
+      [testKey]: testVal,
+    });
+  });
+});
+
+describe('with standard config', () => {
+  const backend = new Backend(null, {
+    host,
+    port,
+    user,
+    password,
+    dbName,
+    collectionName,
+    languageFieldName,
+    namespaceFieldName,
+    dataFieldName,
+  });
+
+  it('valid read result', async () => {
+    for (let i = 0; i < translations.length; i += 1) {
+      const translation = translations[i];
+
+      expect(
+        // eslint-disable-next-line no-await-in-loop
+        await new Promise((resolve, reject) =>
+          backend.read(
+            translation[languageFieldName],
+            translation[namespaceFieldName],
+            (err, res) => {
+              if (err) reject(err);
+              else resolve(res);
+            },
+          ),
+        ),
+      ).toEqual(translation[dataFieldName]);
+    }
+  });
+
+  it('valid readMulti result', async () => {
+    const langs = [];
+    const nss = [];
+    const expectResult = {};
+
+    for (let i = 0; i < translations.length; i += 1) {
+      const translation = translations[i];
+
+      const lang = translation[languageFieldName];
+      const ns = translation[namespaceFieldName];
+
+      if (langs.indexOf(lang) === -1) langs.push(lang);
+      if (nss.indexOf(ns) === -1) nss.push(ns);
+
+      if (expectResult[lang]) {
+        expectResult[lang][ns] = translation[dataFieldName];
+      } else {
+        expectResult[lang] = {
+          [ns]: translation[dataFieldName],
+        };
+      }
+    }
+
+    expect(
+      // eslint-disable-next-line no-await-in-loop
+      await new Promise((resolve, reject) =>
+        backend.readMulti(langs, nss, (err, res) => {
+          if (err) reject(err);
+          else resolve(res);
+        }),
+      ),
+    ).toEqual(expectResult);
+  });
+
+  it('valid create new document', async () => {
+    const testNs = 'translation';
+    const testLang = 'es';
+    const testKey = 'key';
+    const testVal = 'hola mundo';
+
+    await new Promise((resolve, reject) => {
+      backend.create(testLang, testNs, testKey, testVal, (err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
+
+    expect(
+      await new Promise((resolve, reject) =>
+        backend.read(testLang, testNs, (err, res) => {
+          if (err) reject(err);
+          else resolve(res);
+        }),
+      ),
+    ).toEqual({
+      [testKey]: testVal,
+    });
+  });
+});

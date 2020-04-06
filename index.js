@@ -1,4 +1,4 @@
-const deepExtend = require('deep-extend');
+// eslint-disable-next-line import/no-extraneous-dependencies
 const { MongoClient } = require('mongodb');
 
 const defaultOpts = {
@@ -8,16 +8,41 @@ const defaultOpts = {
   languageFieldName: 'lang',
   namespaceFieldName: 'ns',
   dataFieldName: 'data',
-  readErrorHandler: console.error,
-  readMultiErrorHandler: console.error,
-  createErrorHandler: console.error,
+  persistConnection: false,
+  // eslint-disable-next-line no-console
+  readOnError: console.error,
+  // eslint-disable-next-line no-console
+  readMultiOnError: console.error,
+  // eslint-disable-next-line no-console
+  createOnError: console.error,
   mongodb: {
-    auto_reconnect: true,
-    useUnifiedTopology: true
-  }
+    useUnifiedTopology: true,
+  },
 };
 
+// https://www.i18next.com/misc/creating-own-plugins#backend
+
 class Backend {
+  /**
+   * @param {*} services `i18next.services`
+   * @param {object} opts Backend Options
+   * @param {string} [opts.host="127.0.0.1"] MongoDB Host
+   * @param {number} [opts.port=27017] MongoDB Port
+   * @param {string} [opts.user] MongoDB User
+   * @param {string} [opts.password] MongoDB Password
+   * @param {string} opts.dbName Database name for storing i18next data
+   * @param {string} [opts.collectionName="i18n"] Collection name for storing i18next data
+   * @param {string} [opts.languageFieldName="lang"] Field name for language attribute
+   * @param {string} [opts.namespaceFieldName="ns"] Field name for namespace attribute
+   * @param {string} [opts.dataFieldName="data"] Field name for data attribute
+   * @param {boolean} [opts.persistConnection=false] If false, then the database connection will be closed every time the i18next event completes
+   * @param {MongoClient} [opts.client] Custom `MongoClient` instance
+   * @param {function} [opts.readOnError] Error handler for `read` process
+   * @param {function} [opts.readMultiOnError] Error handler for `readMulti` process
+   * @param {function} [opts.createOnError] Error handler for `create` process
+   * @param {object} [opts.mongodb] `MongoClient` Options. See https://mongodb.github.io/node-mongodb-native/3.5/api/MongoClient.html
+   * @param {boolean} [opts.mongodb.useUnifiedTopology=true]
+   */
   constructor(services, opts = {}) {
     this.init(services, opts);
   }
@@ -25,14 +50,36 @@ class Backend {
   // Private methods
 
   async getCollection() {
-    return await (this.client
-      ? this.client.isConnected()
-        ? this.client
-        : await this.client.connect()
-      : (this.client = await MongoClient.connect(this.uri, this.opts.mongodb))
-    )
+    if (!this.client) {
+      if (this.opts.client) this.client = this.opts.client;
+      else {
+        if (this.opts.user && this.opts.password)
+          this.opts.mongodb.auth = {
+            user: this.opts.user,
+            password: this.opts.password,
+          };
+
+        this.uri = `mongodb://${this.opts.host}:${this.opts.port}/${this.opts.dbName}`;
+        this.client = new MongoClient(this.uri, this.opts.mongodb);
+      }
+    }
+
+    if (!this.client.isConnected()) await this.client.connect();
+
+    const collection = await this.client
       .db(this.opts.dbName)
       .createCollection(this.opts.collectionName);
+
+    return collection;
+  }
+
+  async closeIfPersistConnection(prevParam) {
+    if (!this.opts.persistConnection && this.client.isConnected()) {
+      await this.client.close();
+      delete this.client;
+    }
+
+    return prevParam;
   }
 
   // i18next methods
@@ -40,55 +87,44 @@ class Backend {
   init(services, opts, i18nOpts) {
     this.services = services;
 
-    this.opts = defaultOpts;
-    deepExtend(this.opts, this.options, opts);
-
-    if (this.opts.user && this.opts.password)
-      this.opts.mongodb.auth = {
-        user: this.opts.user,
-        password: this.opts.password
-      };
-
-    // Cache Mongodb Connection
-    this.client = this.opts.client || null;
-
     this.i18nOpts = i18nOpts;
-
-    this.uri = `mongodb://${this.opts.host}:${this.opts.port}/${this.opts.dbName}`;
+    this.opts = { ...defaultOpts, ...this.options, ...opts };
   }
 
   read(lang, ns, cb) {
     if (!cb) return;
 
     this.getCollection()
-      .then(col =>
+      .then((col) =>
         col.findOne(
           {
             [this.opts.languageFieldName]: lang,
-            [this.opts.namespaceFieldName]: ns
+            [this.opts.namespaceFieldName]: ns,
           },
           {
-            [this.opts.dataFieldName]: true
-          }
-        )
+            [this.opts.dataFieldName]: true,
+          },
+        ),
       )
-      .then(doc => cb(null, (doc && doc.data) || {}))
-      .catch(this.opts.readErrorHandler);
+      .then((prevParam) => this.closeIfPersistConnection(prevParam))
+      .then((doc) => cb(null, (doc && doc[this.opts.dataFieldName]) || {}))
+      .catch(this.opts.readOnError);
   }
 
   readMulti(langs, nss, cb) {
     if (!cb) return;
 
     this.getCollection()
-      .then(col =>
+      .then((col) =>
         col
           .find({
             [this.opts.languageFieldName]: { $in: langs },
-            [this.opts.namespaceFieldName]: { $in: nss }
+            [this.opts.namespaceFieldName]: { $in: nss },
           })
-          .toArray()
+
+          .toArray(),
       )
-      .then(docs => {
+      .then((docs) => {
         const parsed = {};
 
         for (let i = 0; i < docs.length; i += 1) {
@@ -104,44 +140,49 @@ class Backend {
           parsed[lang][ns] = data;
         }
 
-        cb(null, parsed);
+        return parsed;
       })
-      .catch(this.opts.readMultiErrorHandler);
+      .then((prevParam) => this.closeIfPersistConnection(prevParam))
+      .then((parsed) => cb(null, parsed))
+      .catch(this.opts.readMultiOnError);
   }
 
   create(langs, ns, key, fallbackVal, cb) {
-    if (typeof langs === 'string') langs = [langs];
+    const parsedLangs = typeof langs === 'string' ? [langs] : langs;
 
     this.getCollection()
-      .then(col =>
-        (async () => {
-          for (let i = 0; i < langs.length; i += 1) {
-            const lang = langs[i];
+      .then((col) => {
+        const updateTasks = [];
 
-            await col.updateOne(
+        for (let i = 0; i < parsedLangs.length; i += 1) {
+          updateTasks.push(
+            col.updateOne(
               {
-                [this.opts.languageFieldName]: lang,
-                [this.opts.namespaceFieldName]: ns
+                [this.opts.languageFieldName]: parsedLangs[i],
+                [this.opts.namespaceFieldName]: ns,
               },
               {
                 $set: {
-                  [`data.${key}`]: fallbackVal
-                }
+                  [`${this.opts.dataFieldName}.${key}`]: fallbackVal,
+                },
               },
               {
-                upsert: true
-              }
-            );
-          }
-        })()
-      )
+                upsert: true,
+              },
+            ),
+          );
+        }
+
+        return Promise.all(updateTasks);
+      })
+      .then(() => this.closeIfPersistConnection())
       // Call cb if exists
       .then(() => cb && cb())
-      .catch(this.opts.createErrorHandler);
+      .catch(this.opts.createOnError);
   }
 }
 
-//https://www.i18next.com/misc/creating-own-plugins#make-sure-to-set-the-plugin-type
+// https://www.i18next.com/misc/creating-own-plugins#make-sure-to-set-the-plugin-type
 Backend.type = 'backend';
 
 module.exports = Backend;
