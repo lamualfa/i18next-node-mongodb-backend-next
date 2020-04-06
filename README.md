@@ -1,7 +1,7 @@
 [![npm](https://badgen.net/npm/v/i18next-node-mongo-backend?color=red)](https://www.npmjs.com/package/i18next-node-mongo-backend)
 [![license](https://badgen.net/npm/license/i18next-node-mongo-backend)](https://github.com/laodemalfatih/i18next-node-mongo-backend/blob/master/LICENSE)
 
-[![Build Status](https://travis-ci.com/laodemalfatih/i18next-node-mongo-backend.svg?branch=v0.0.3-dev)](https://travis-ci.com/laodemalfatih/i18next-node-mongo-backend)
+[![Build Status](https://travis-ci.com/laodemalfatih/i18next-node-mongo-backend.svg)](https://travis-ci.com/laodemalfatih/i18next-node-mongo-backend)
 [![codecov](https://codecov.io/gh/laodemalfatih/i18next-node-mongo-backend/branch/master/graph/badge.svg)](https://codecov.io/gh/laodemalfatih/i18next-node-mongo-backend)
 [![Maintainability](https://api.codeclimate.com/v1/badges/5fc60912b2776f1e1a53/maintainability)](https://codeclimate.com/github/laodemalfatih/i18next-node-mongo-backend/maintainability)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
@@ -136,9 +136,9 @@ i18next
 
 # Change Log:
 
-### v0.0.3 (06-04-2020):
+### v0.0.3 _(06-04-2020)_:
   - Add testing code with [Jest](https://jestjs.io/)
   - Add [JSDOC](https://jsdoc.app/)
   - Add support for the `uri` option
-  - Add `filterFieldNameCharacter: true` option
+  - Add `filterFieldNameCharacter` option
   - Some improvements
