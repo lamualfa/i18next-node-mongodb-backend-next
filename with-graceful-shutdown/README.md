@@ -1,4 +1,4 @@
-## Example integrate `i18next-node-mongo-backend` with `i18next`
+# Example integrate `i18next-node-mongo-backend` with `i18next`
 
 ## Requirements
 
@@ -7,7 +7,7 @@
 
 ## Usage
 
-From root folder:
+From root project:
 `node with-graceful-shutdown/app.js`
 
 ## Important

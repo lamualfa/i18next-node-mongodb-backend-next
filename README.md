@@ -1,6 +1,6 @@
-Examples integrate `i18next-node-mongo-backend` with several systems
+# Examples integrate `i18next-node-mongo-backend` with several systems
 
-# Content
+## Content
 
 **Sample available:**
 - [with-express](./with-express/README.md) - Integrate `i18next-node-mongo-backend` with `express` server

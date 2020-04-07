@@ -1,4 +1,4 @@
-## Example integrate `i18next-node-mongo-backend` with `express`
+# Example integrate `i18next-node-mongo-backend` with `express`
 
 ## Requirements
 
@@ -7,7 +7,7 @@
 
 ## Usage
 
-From root root:
+From root project:
 `node with-express/app.js`
 
 Go to http://127.0.0.1:3000/ to see what happening.
