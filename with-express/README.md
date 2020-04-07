@@ -1,9 +1,9 @@
-# Example integrate `i18next-node-mongo-backend` with `express`
+#### Example integrate `i18next-node-mongo-backend` with `express`
 
 ## Requirements
 
 - MongoDB
-> Note: May not be password protected. If you still need it, do your own customization directly on the code.
+> Note: The database must not be password. If you still need it, do your own customization directly on the code.
 
 ## Usage
 
