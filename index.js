@@ -12,7 +12,6 @@ const defaultOpts = {
   namespaceFieldName: 'ns',
   dataFieldName: 'data',
   filterFieldNameCharacter: true,
-  persistConnection: false,
   // eslint-disable-next-line no-console
   readOnError: console.error,
   // eslint-disable-next-line no-console
@@ -41,7 +40,6 @@ class Backend {
    * @param {string} [opts.namespaceFieldName="ns"] Field name for namespace attribute
    * @param {string} [opts.dataFieldName="data"] Field name for data attribute
    * @param {boolean} [opts.filterFieldNameCharacter=true] Remove MongoDB special character (contains ".", or starts with "$"). See https://jira.mongodb.org/browse/SERVER-3229
-   * @param {boolean} [opts.persistConnection=false] If false, then the database connection will be closed every time the i18next event completes
    * @param {MongoClient} [opts.client] Custom `MongoClient` instance
    * @param {function} [opts.readOnError] Error handler for `read` process
    * @param {function} [opts.readMultiOnError] Error handler for `readMulti` process
@@ -56,27 +54,41 @@ class Backend {
   // Private methods
 
   async getCollection() {
-    if (!this.client) {
-      this.client = this.opts.client
-        ? this.opts.client
-        : new MongoClient(
+    try {
+      if (!this.client) {
+        this.client = this.opts.client
+          ? this.opts.client
+          : new MongoClient(
             this.opts.uri ||
-              `mongodb://${this.opts.host}:${this.opts.port}/${this.opts.dbName}`,
+            `mongodb://${this.opts.host}:${this.opts.port}/${this.opts.dbName}`,
             this.opts.mongodb,
           );
+      }
+
+      if (this.client && !this.connecting && !this.client.isConnected()) {
+        this.connecting = true;
+        await this.client.connect();
+        this.connecting = false;
+      }
+
+      const collection = await this.client
+        .db(this.opts.dbName)
+        .createCollection(this.opts.collectionName);
+
+      return collection;
+    } catch (error) {
+      this.connecting = false;
+      throw error;
     }
-
-    if (!this.client.isConnected()) await this.client.connect();
-
-    const collection = await this.client
-      .db(this.opts.dbName)
-      .createCollection(this.opts.collectionName);
-
-    return collection;
   }
 
-  async closeConnection() {
-    if (this.client.isConnected()) await this.client.close();
+  async closeConnection({event = null, code = null}) {
+    this.connecting = false;
+
+    if (this.client && this.client.isConnected()){
+      this.client.close();
+      console.info(`${event}:${code}:Disconnected from mongo (${event})`);
+    }
 
     delete this.client;
   }
@@ -104,11 +116,24 @@ class Backend {
       );
     }
 
-    if (this.opts.user && this.opts.password)
+    if (this.opts.user && this.opts.password){
       this.opts.mongodb.auth = {
         user: this.opts.user,
         password: this.opts.password,
       };
+    }
+
+    const disconnectMongo = (event) => {
+      return (code) => {
+        this.closeConnection({ event, code });
+        process.exit(0);
+      };
+    };
+
+    process.on('SIGINT', disconnectMongo('SIGINT'));
+    process.on('SIGTERM', disconnectMongo('SIGTERM'));
+    process.on('SIGABRT', disconnectMongo('SIGABRT'));
+    process.on('uncaughtException', disconnectMongo('uncaughtException'));
   }
 
   read(lang, ns, cb) {
@@ -125,11 +150,12 @@ class Backend {
             [this.opts.dataFieldName]: true,
           },
         );
-
-        if (!this.opts.persistConnection) await this.closeConnection();
         cb(null, (doc && doc[this.opts.dataFieldName]) || {});
       })
-      .catch(this.opts.readOnError);
+      .catch((error) => {
+        cb(error, null);
+        this.opts.readOnError(error)
+      });
   }
 
   readMulti(langs, nss, cb) {
@@ -159,10 +185,12 @@ class Backend {
           parsed[lang][ns] = data;
         }
 
-        if (!this.opts.persistConnection) await this.closeConnection();
         cb(null, parsed);
       })
-      .catch(this.opts.readMultiOnError);
+      .catch((error) => {
+        cb(error, null);
+        this.opts.readMultiOnError(error);
+      });
   }
 
   create(langs, ns, key, fallbackVal, cb) {
@@ -185,8 +213,7 @@ class Backend {
               },
             ),
           ),
-        );
-        if (!this.opts.persistConnection) await this.closeConnection();
+        )
 
         if (cb) cb();
       })

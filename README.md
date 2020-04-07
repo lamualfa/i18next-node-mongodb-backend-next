@@ -77,8 +77,6 @@ i18next
   // Remove MongoDB special character from field name. See https://jira.mongodb.org/browse/SERVER-3229
   filterFieldNameCharacter: true,
 
-  // If false, then the database connection will be closed every time the i18next event completes
-  persistConnection: false,
 
   // Error handlers
   readOnError: console.error,
@@ -116,8 +114,6 @@ i18next
 {
   client: new MongoClient(), // Change with your MongoClient instance
   dbName: 'test', // Required field
-  // [IMPORTANT] Set to true to avoid closing connection with Backend
-  persistConnection: true
 }
 ```
 
