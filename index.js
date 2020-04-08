@@ -5,14 +5,11 @@ const { MongoClient } = require('mongodb');
 const MONGODB_SPECIAL_CHARACTER_REGEX = /^\$|\./g;
 
 const defaultOpts = {
-  host: '127.0.0.1',
-  port: 27017,
   collectionName: 'i18n',
   languageFieldName: 'lang',
   namespaceFieldName: 'ns',
   dataFieldName: 'data',
   filterFieldNameCharacter: true,
-  persistConnection: false,
   // eslint-disable-next-line no-console
   readOnError: console.error,
   // eslint-disable-next-line no-console
@@ -31,8 +28,8 @@ class Backend {
    * @param {*} services `i18next.services`
    * @param {object} opts Backend Options
    * @param {string} [opts.uri] MongoDB Uri
-   * @param {string} [opts.host="127.0.0.1"] MongoDB Host
-   * @param {number} [opts.port=27017] MongoDB Port
+   * @param {string} opts.host MongoDB Host
+   * @param {number} opts.port MongoDB Port
    * @param {string} [opts.user] MongoDB User
    * @param {string} [opts.password] MongoDB Password
    * @param {string} opts.dbName Database name for storing i18next data
@@ -41,7 +38,6 @@ class Backend {
    * @param {string} [opts.namespaceFieldName="ns"] Field name for namespace attribute
    * @param {string} [opts.dataFieldName="data"] Field name for data attribute
    * @param {boolean} [opts.filterFieldNameCharacter=true] Remove MongoDB special character (contains ".", or starts with "$"). See https://jira.mongodb.org/browse/SERVER-3229
-   * @param {boolean} [opts.persistConnection=false] If false, then the database connection will be closed every time the i18next event completes
    * @param {MongoClient} [opts.client] Custom `MongoClient` instance
    * @param {function} [opts.readOnError] Error handler for `read` process
    * @param {function} [opts.readMultiOnError] Error handler for `readMulti` process
@@ -55,30 +51,17 @@ class Backend {
 
   // Private methods
 
-  async getCollection() {
-    if (!this.client) {
-      this.client = this.opts.client
-        ? this.opts.client
-        : new MongoClient(
-            this.opts.uri ||
-              `mongodb://${this.opts.host}:${this.opts.port}/${this.opts.dbName}`,
-            this.opts.mongodb,
-          );
-    }
+  getClient() {
+    if (this.persistConnection) return Promise.resolve(this.client);
+    return MongoClient.connect(this.uri, this.opts.mongodb);
+  }
 
-    if (!this.client.isConnected()) await this.client.connect();
-
-    const collection = await this.client
+  async getCollection(client) {
+    const collection = await client
       .db(this.opts.dbName)
       .createCollection(this.opts.collectionName);
 
     return collection;
-  }
-
-  async closeConnection() {
-    if (this.client.isConnected()) await this.client.close();
-
-    delete this.client;
   }
 
   // i18next required methods
@@ -104,18 +87,30 @@ class Backend {
       );
     }
 
-    if (this.opts.user && this.opts.password)
-      this.opts.mongodb.auth = {
-        user: this.opts.user,
-        password: this.opts.password,
-      };
+    if (this.opts.uri || this.opts.host) {
+      this.persistConnection = false;
+      this.uri =
+        this.opts.uri ||
+        `mongodb://${this.opts.host}:${this.opts.port}/${this.opts.dbName}`;
+
+      if (this.opts.user && this.opts.password)
+        this.opts.mongodb.auth = {
+          user: this.opts.user,
+          password: this.opts.password,
+        };
+    } else {
+      this.persistConnection = true;
+      this.client = this.opts.client;
+    }
   }
 
   read(lang, ns, cb) {
     if (!cb) return;
 
-    this.getCollection()
-      .then(async (col) => {
+    this.getClient()
+      .then(async (client) => {
+        const col = await this.getCollection(client);
+
         const doc = await col.findOne(
           {
             [this.opts.languageFieldName]: lang,
@@ -126,7 +121,8 @@ class Backend {
           },
         );
 
-        if (!this.opts.persistConnection) await this.closeConnection();
+        if (!this.opts.persistConnection && client.isConnected())
+          await client.close();
         cb(null, (doc && doc[this.opts.dataFieldName]) || {});
       })
       .catch(this.opts.readOnError);
@@ -135,8 +131,10 @@ class Backend {
   readMulti(langs, nss, cb) {
     if (!cb) return;
 
-    this.getCollection()
-      .then(async (col) => {
+    this.getClient()
+      .then(async (client) => {
+        const col = await this.getCollection(client);
+
         const docs = await col
           .find({
             [this.opts.languageFieldName]: { $in: langs },
@@ -159,15 +157,18 @@ class Backend {
           parsed[lang][ns] = data;
         }
 
-        if (!this.opts.persistConnection) await this.closeConnection();
+        if (!this.opts.persistConnection && client.isConnected())
+          await client.close();
         cb(null, parsed);
       })
       .catch(this.opts.readMultiOnError);
   }
 
   create(langs, ns, key, fallbackVal, cb) {
-    this.getCollection()
-      .then(async (col) => {
+    this.getClient()
+      .then(async (client) => {
+        const col = await this.getCollection(client);
+
         await Promise.all(
           (typeof langs === 'string' ? [langs] : langs).map((lang) =>
             col.updateOne(
@@ -186,8 +187,9 @@ class Backend {
             ),
           ),
         );
-        if (!this.opts.persistConnection) await this.closeConnection();
 
+        if (!this.opts.persistConnection && client.isConnected())
+          await client.close();
         if (cb) cb();
       })
       .catch(this.opts.createOnError);

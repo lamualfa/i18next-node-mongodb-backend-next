@@ -48,12 +48,12 @@ i18next
   dbName: '<DB Name>', // Required
 
   // MongoDB Uri
-  uri: 'mongodb://localhost:27017',
+  uri: '<DB URI>',
 
   // Or
 
    // MongoDB standard configuration
-  host: '127.0.0.1',
+  host: '<DB Host>',
   port: 27017,
 
   // Or
@@ -63,8 +63,8 @@ i18next
   client: new MongoClient(), // work with connected client or not
 
   // MongoDB authentication. Remove it if not needed
-  user: '<User>',
-  password: '<Password>',
+  user: '<DB User>',
+  password: '<DB Password>',
 
   // Collection name in database will be used to store i18next data
   collectionName: 'i18n',
@@ -76,9 +76,6 @@ i18next
 
   // Remove MongoDB special character from field name. See https://jira.mongodb.org/browse/SERVER-3229
   filterFieldNameCharacter: true,
-
-  // If false, then the database connection will be closed every time the i18next event completes
-  persistConnection: false,
 
   // Error handlers
   readOnError: console.error,
@@ -116,8 +113,6 @@ i18next
 {
   client: new MongoClient(), // Change with your MongoClient instance
   dbName: 'test', // Required field
-  // [IMPORTANT] Set to true to avoid closing connection with Backend
-  persistConnection: true
 }
 ```
 
@@ -135,7 +130,11 @@ i18next
 
 # Change Log:
 
-### v0.0.3 _(06-04-2020)_:
+### v0.0.4 _(08-04-20)_:
+  - Critical bug fixed
+  - Remove `persistConnection` option
+
+### v0.0.3 _(DEPRECATED)_:
   - Add testing code with [Jest](https://jestjs.io/)
   - Add [JSDOC](https://jsdoc.app/)
   - Add support for the `uri` option

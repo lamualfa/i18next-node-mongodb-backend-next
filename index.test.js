@@ -29,6 +29,20 @@ const translations = [
       key: 'Halo dunia',
     },
   },
+  {
+    [languageFieldName]: 'en',
+    [namespaceFieldName]: 'translation-2',
+    [dataFieldName]: {
+      key2: 'Hello world 2',
+    },
+  },
+  {
+    [languageFieldName]: 'id',
+    [namespaceFieldName]: 'translation-2',
+    [dataFieldName]: {
+      key2: 'Halo dunia 2',
+    },
+  },
 ];
 
 const client = new MongoClient(`mongodb://${host}:${port}/${dbName}`, {
@@ -48,23 +62,25 @@ function asyncify(backend, method, ...params) {
   );
 }
 
-function basicTest(backend) {
+function basicReadTest(backend) {
   it('valid read result', async () => {
-    for (let i = 0; i < translations.length; i += 1) {
-      const translation = translations[i];
-
-      expect(
-        // eslint-disable-next-line no-await-in-loop
-        await asyncify(
-          backend,
-          'read',
-          translation[languageFieldName],
-          translation[namespaceFieldName],
-        ),
-      ).toEqual(translation[dataFieldName]);
-    }
+    // Concurrency read test
+    await Promise.all(
+      translations.map((translation) => async () => {
+        expect(
+          await asyncify(
+            backend,
+            'read',
+            translation[languageFieldName],
+            translation[namespaceFieldName],
+          ),
+        ).toBe(translation[dataFieldName]);
+      }),
+    );
   });
+}
 
+function basicReadMultiTest(backend) {
   it('valid readMulti result', async () => {
     const langs = [];
     const nss = [];
@@ -90,7 +106,9 @@ function basicTest(backend) {
       await asyncify(backend, 'readMulti', langs, nss),
     ).toEqual(expectResult);
   });
+}
 
+function basicCreateTest(backend) {
   it('valid create new document', async () => {
     const testNs = 'translation';
     const testLang = 'es';
@@ -176,7 +194,9 @@ describe('with custom MongoClient', () => {
     persistConnection: true,
   });
 
-  basicTest(backend);
+  basicReadTest(backend);
+  basicReadMultiTest(backend);
+  basicCreateTest(backend);
 });
 
 describe('with standard config', () => {
@@ -192,5 +212,7 @@ describe('with standard config', () => {
     dataFieldName,
   });
 
-  basicTest(backend);
+  basicReadTest(backend);
+  basicReadMultiTest(backend);
+  basicCreateTest(backend);
 });
