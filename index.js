@@ -27,9 +27,10 @@ class Backend {
   /**
    * @param {*} services `i18next.services`
    * @param {object} opts Backend Options
-   * @param {string} [opts.uri] MongoDB Uri
+   * @param {string} opts.uri MongoDB Uri
    * @param {string} opts.host MongoDB Host
    * @param {number} opts.port MongoDB Port
+   * @param {MongoClient} opts.client Use your custom `MongoClient` instance. Example: `new MongoClient()`
    * @param {string} [opts.user] MongoDB User
    * @param {string} [opts.password] MongoDB Password
    * @param {string} opts.dbName Database name for storing i18next data
@@ -38,7 +39,6 @@ class Backend {
    * @param {string} [opts.namespaceFieldName="ns"] Field name for namespace attribute
    * @param {string} [opts.dataFieldName="data"] Field name for data attribute
    * @param {boolean} [opts.filterFieldNameCharacter=true] Remove MongoDB special character (contains ".", or starts with "$"). See https://jira.mongodb.org/browse/SERVER-3229
-   * @param {MongoClient} [opts.client] Custom `MongoClient` instance
    * @param {function} [opts.readOnError] Error handler for `read` process
    * @param {function} [opts.readMultiOnError] Error handler for `readMulti` process
    * @param {function} [opts.createOnError] Error handler for `create` process
@@ -52,19 +52,17 @@ class Backend {
   // Private methods
 
   getClient() {
-    if (this.persistConnection && this.client)
+    if (this.client)
       return this.client.isConnected()
         ? Promise.resolve(this.client)
         : this.client.connect();
     return MongoClient.connect(this.uri, this.opts.mongodb);
   }
 
-  async getCollection(client) {
-    const collection = await client
+  getCollection(client) {
+    return client
       .db(this.opts.dbName)
       .createCollection(this.opts.collectionName);
-
-    return collection;
   }
 
   // i18next required methods
@@ -91,7 +89,6 @@ class Backend {
     }
 
     if (this.opts.uri || this.opts.host) {
-      this.persistConnection = false;
       this.uri =
         this.opts.uri ||
         `mongodb://${this.opts.host}:${this.opts.port}/${this.opts.dbName}`;
@@ -101,10 +98,7 @@ class Backend {
           user: this.opts.user,
           password: this.opts.password,
         };
-    } else {
-      this.persistConnection = true;
-      this.client = this.opts.client;
-    }
+    } else this.client = this.opts.client;
   }
 
   read(lang, ns, cb) {
@@ -124,8 +118,8 @@ class Backend {
           },
         );
 
-        if (!this.opts.persistConnection && client.isConnected())
-          await client.close();
+        // If `this.client` exists (equal to if use custom MongoClient), don't close connection
+        if (!this.client && client.isConnected()) await client.close();
         cb(null, (doc && doc[this.opts.dataFieldName]) || {});
       })
       .catch(this.opts.readOnError);
@@ -160,8 +154,8 @@ class Backend {
           parsed[lang][ns] = data;
         }
 
-        if (!this.opts.persistConnection && client.isConnected())
-          await client.close();
+        // If `this.client` exists (equal to if use custom MongoClient), don't close connection
+        if (!this.client && client.isConnected()) await client.close();
         cb(null, parsed);
       })
       .catch(this.opts.readMultiOnError);
@@ -172,6 +166,7 @@ class Backend {
       .then(async (client) => {
         const col = await this.getCollection(client);
 
+        // Make `updateOne` process run concurrently
         await Promise.all(
           (typeof langs === 'string' ? [langs] : langs).map((lang) =>
             col.updateOne(
@@ -191,8 +186,8 @@ class Backend {
           ),
         );
 
-        if (!this.opts.persistConnection && client.isConnected())
-          await client.close();
+        // If `this.client` exists (equal to if use custom MongoClient), don't close connection
+        if (!this.client && client.isConnected()) await client.close();
         if (cb) cb();
       })
       .catch(this.opts.createOnError);

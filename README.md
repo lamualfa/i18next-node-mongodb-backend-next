@@ -10,7 +10,7 @@
 
 # Integrate [i18next](https://github.com/i18next/i18next) with [MongoDB](https://www.mongodb.com/)
 
-<img src="assets/i18next.png" alt="I18next Logo" width="100"/><img src="assets/mongodb.png" alt="MongoDB Logo" width="330" style="margin-left: 40px;"/>
+<img src="assets/i18next.png" alt="I18next Logo" width="100"/><img src="assets/mongodb.png" alt="MongoDB Logo" width="330" style="margin-left: 60px;"/>
 
 # Introduction
 
