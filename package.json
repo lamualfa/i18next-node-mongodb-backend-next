@@ -25,9 +25,6 @@
     "test": "jest && codecov",
     "test:dev": "jest --verbose false"
   },
-  "dependencies": {
-    "xtend": "^4.0.2"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/laodemalfatih/i18next-node-mongo-backend.git"
