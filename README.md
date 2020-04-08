@@ -108,7 +108,9 @@ i18next
 }
 ```
 
-#### Connect with `MongoClient` instance _(if you already have your own connection, use this to avoid useless connections)_ : Recommended
+#### Connect with `MongoClient` instance (_Recommended_):
+If you already have your own connection, use this to avoid useless connections
+
 ```js
 {
   client: new MongoClient(), // Change with your MongoClient instance
@@ -128,7 +130,7 @@ i18next
 }
 ```
 
-### See [examples](https://github.com/laodemalfatih/i18next-node-mongo-backend/tree/v0.0.4-examples) for more example
+## Visit [here](https://github.com/laodemalfatih/i18next-node-mongo-backend/tree/v0.0.4-examples) for more example usage
 
 # Change Log:
 
