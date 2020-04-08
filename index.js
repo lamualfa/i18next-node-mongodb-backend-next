@@ -52,7 +52,10 @@ class Backend {
   // Private methods
 
   getClient() {
-    if (this.persistConnection) return Promise.resolve(this.client);
+    if (this.persistConnection && this.client)
+      return this.client.isConnected()
+        ? Promise.resolve(this.client)
+        : this.client.connect();
     return MongoClient.connect(this.uri, this.opts.mongodb);
   }
 

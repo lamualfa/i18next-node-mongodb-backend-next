@@ -10,7 +10,7 @@
 
 # Integrate [i18next](https://github.com/i18next/i18next) with [MongoDB](https://www.mongodb.com/)
 
-<img src="assets/i18next.png" alt="I18next Logo" width="100"/><img src="assets/mongodb.png" alt="MongoDB Logo" width="330" style="margin-left: 30px;"/>
+<img src="assets/i18next.png" alt="I18next Logo" width="100"/><img src="assets/mongodb.png" alt="MongoDB Logo" width="330" style="margin-left: 40px;"/>
 
 # Introduction
 
@@ -108,7 +108,7 @@ i18next
 }
 ```
 
-#### Connect with `MongoClient` instance _(if you already have your own connection, use this to avoid useless connections)_:
+#### Connect with `MongoClient` instance _(if you already have your own connection, use this to avoid useless connections)_ : Recommended
 ```js
 {
   client: new MongoClient(), // Change with your MongoClient instance
@@ -127,6 +127,8 @@ i18next
   }
 }
 ```
+
+### See [examples](https://github.com/laodemalfatih/i18next-node-mongo-backend/tree/v0.0.4-examples) for more example
 
 # Change Log:
 
