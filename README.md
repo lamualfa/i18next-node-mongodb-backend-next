@@ -32,12 +32,10 @@ npm install mongodb i18next-node-mongo-backend
 const i18next = require('i18next');
 const Backend = require('i18next-node-mongo-backend');
 
-i18next
-  .use(Backend)
-  .init({
-    // Backend Options
-    backend: options
-  });
+i18next.use(Backend).init({
+  // Backend Options
+  backend: options,
+});
 ```
 
 # Backend Options
@@ -75,7 +73,7 @@ i18next
   dataFieldName: 'data',
 
   // Remove MongoDB special character from field name. See https://jira.mongodb.org/browse/SERVER-3229
-  filterFieldNameCharacter: true,
+  sanitizeFieldNameCharacter: true,
 
   // Error handlers
   readOnError: console.error,
@@ -92,6 +90,7 @@ i18next
 ## Example Backend Options
 
 #### Connect with `uri`:
+
 ```js
 {
   uri: 'mongodb://localhost:27017/test',
@@ -100,6 +99,7 @@ i18next
 ```
 
 #### Connect with `host` and `port`:
+
 ```js
 {
   host: 'localhost',
@@ -109,6 +109,7 @@ i18next
 ```
 
 #### Connect with `MongoClient` instance (_Recommended_):
+
 If you already have your own connection, use this to avoid useless connections
 
 ```js
@@ -119,12 +120,13 @@ If you already have your own connection, use this to avoid useless connections
 ```
 
 ## Example of the MongoDB document that will be created:
+
 ```json
 // Key name is according to provided in options
 {
-  "lang" : "en-US",
-  "ns" : "translations",
-  "data" : {
+  "lang": "en-US",
+  "ns": "translations",
+  "data": {
     "key": "Thank you!"
   }
 }
@@ -135,12 +137,15 @@ If you already have your own connection, use this to avoid useless connections
 # Change Log:
 
 ### v0.0.4 _(08-04-20)_:
-  - Critical bug fixed
-  - Remove `persistConnection` option
+
+- Critical bug fixed
+- Remove `persistConnection` option
+- Rename `filterFieldNameCharacter` option to `sanitizeFieldNameCharacter`
 
 ### v0.0.3 _(DEPRECATED)_:
-  - Add testing code with [Jest](https://jestjs.io/)
-  - Add [JSDOC](https://jsdoc.app/)
-  - Add support for the `uri` option
-  - Add `filterFieldNameCharacter` option
-  - Some improvements
+
+- Add testing code with [Jest](https://jestjs.io/)
+- Add [JSDOC](https://jsdoc.app/)
+- Add support for the `uri` option
+- Add `filterFieldNameCharacter` option
+- Some improvements

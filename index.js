@@ -1,15 +1,14 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { MongoClient } = require('mongodb');
 
-// Remove MongoDB special character. See https://jira.mongodb.org/browse/SERVER-3229?focusedCommentId=36821&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-36821
-const MONGODB_SPECIAL_CHARACTER_REGEX = /^\$|\./g;
+const sanitizeFieldNameCharacter = require('./libs/sanitizeFieldNameCharacter');
 
 const defaultOpts = {
   collectionName: 'i18n',
   languageFieldName: 'lang',
   namespaceFieldName: 'ns',
   dataFieldName: 'data',
-  filterFieldNameCharacter: true,
+  sanitizeFieldNameCharacter: true,
   // eslint-disable-next-line no-console
   readOnError: console.error,
   // eslint-disable-next-line no-console
@@ -38,7 +37,7 @@ class Backend {
    * @param {string} [opts.languageFieldName="lang"] Field name for language attribute
    * @param {string} [opts.namespaceFieldName="ns"] Field name for namespace attribute
    * @param {string} [opts.dataFieldName="data"] Field name for data attribute
-   * @param {boolean} [opts.filterFieldNameCharacter=true] Remove MongoDB special character (contains ".", or starts with "$"). See https://jira.mongodb.org/browse/SERVER-3229
+   * @param {boolean} [opts.sanitizeFieldNameCharacter=true] Remove MongoDB special character (contains ".", or starts with "$"). See https://jira.mongodb.org/browse/SERVER-3229
    * @param {function} [opts.readOnError] Error handler for `read` process
    * @param {function} [opts.readMultiOnError] Error handler for `readMulti` process
    * @param {function} [opts.createOnError] Error handler for `create` process
@@ -69,26 +68,23 @@ class Backend {
 
   init(services, opts, i18nOpts) {
     this.services = services;
-
     this.i18nOpts = i18nOpts;
     this.opts = { ...defaultOpts, ...this.options, ...opts };
 
-    if (this.opts.filterFieldNameCharacter) {
-      this.opts.languageFieldName = this.opts.languageFieldName.replace(
-        MONGODB_SPECIAL_CHARACTER_REGEX,
-        '',
+    if (this.opts.sanitizeFieldNameCharacter) {
+      this.opts.languageFieldName = sanitizeFieldNameCharacter(
+        this.opts.languageFieldName,
       );
-      this.opts.namespaceFieldName = this.opts.namespaceFieldName.replace(
-        MONGODB_SPECIAL_CHARACTER_REGEX,
-        '',
+      this.opts.namespaceFieldName = sanitizeFieldNameCharacter(
+        this.opts.namespaceFieldName,
       );
-      this.opts.dataFieldName = this.opts.dataFieldName.replace(
-        MONGODB_SPECIAL_CHARACTER_REGEX,
-        '',
+      this.opts.dataFieldName = sanitizeFieldNameCharacter(
+        this.opts.dataFieldName,
       );
     }
 
-    if (this.opts.uri || this.opts.host) {
+    if (this.opts.client) this.client = this.opts.client;
+    else {
       this.uri =
         this.opts.uri ||
         `mongodb://${this.opts.host}:${this.opts.port}/${this.opts.dbName}`;
@@ -98,7 +94,7 @@ class Backend {
           user: this.opts.user,
           password: this.opts.password,
         };
-    } else this.client = this.opts.client;
+    }
   }
 
   read(lang, ns, cb) {
