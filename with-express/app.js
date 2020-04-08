@@ -6,7 +6,7 @@ const {
   DB_NAME,
   I18N_COL_NAME,
   SERVER_HOST,
-  SERVER_PORT
+  SERVER_PORT,
 } = process.env;
 
 const express = require('express');
@@ -14,8 +14,10 @@ const i18next = require('i18next');
 const expressMiddleware_i18next = require('i18next-express-middleware');
 const Backend = require('i18next-node-mongo-backend');
 
-const { initDatabase } = require('../libs/initDatabase');
-const { initTranslations, translations } = require('../libs/initTranslations');
+const initDatabase = require('../libs/initDatabase');
+const initTranslations = require('../libs/initTranslations');
+
+const translations = require('./translations');
 
 let client;
 let server;
@@ -25,7 +27,7 @@ async function main() {
   client = await initDatabase(DB_HOST, DB_PORT, DB_NAME);
 
   const col = await client.db(DB_NAME).createCollection(I18N_COL_NAME);
-  await initTranslations(col);
+  await initTranslations(col, translations);
 
   // I18n
   await i18next
@@ -37,8 +39,7 @@ async function main() {
         client,
         dbName: DB_NAME,
         collectionName: I18N_COL_NAME,
-        persistConnection: true
-      }
+      },
     });
 
   // Server
@@ -77,7 +78,7 @@ async function gracefulShutdown() {
   try {
     if (server) {
       console.log('Shutdown server...');
-      await new Promise(resolve =>
+      await new Promise((resolve) =>
         server.close(() => {
           resolve();
         })

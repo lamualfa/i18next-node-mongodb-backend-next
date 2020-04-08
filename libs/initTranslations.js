@@ -1,42 +1,22 @@
-const translations = [
-  {
-    lang: 'en',
-    ns: 'translation',
-    data: {
-      key: 'Hello world'
-    }
-  },
-  {
-    lang: 'id',
-    ns: 'translation',
-    data: {
-      key: 'Halo dunia'
-    }
-  }
-];
-
-function initTranslations(col) {
-  const updateTasks = translations.map(translation =>
+module.exports = async function initTranslations(col, translations) {
+  console.log('Init translations...');
+  const updateTasks = translations.map((translation) =>
     col.updateOne(
       {
         lang: translation.lang,
-        ns: translation.ns
+        ns: translation.ns,
       },
       {
         $set: {
-          data: translation.data
-        }
+          data: translation.data,
+        },
       },
       {
-        upsert: true
+        upsert: true,
       }
     )
   );
 
-  return Promise.all(updateTasks);
-}
-
-module.exports = {
-  translations,
-  initTranslations
+  await Promise.all(updateTasks);
+  console.log('Translations has been initialized');
 };

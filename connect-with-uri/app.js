@@ -5,8 +5,10 @@ const { DB_HOST, DB_PORT, DB_NAME, I18N_COL_NAME } = process.env;
 const i18next = require('i18next');
 const Backend = require('i18next-node-mongo-backend');
 
-const { initDatabase } = require('../libs/initDatabase');
-const { initTranslations } = require('../libs/initTranslations');
+const initDatabase = require('../libs/initDatabase');
+const initTranslations = require('../libs/initTranslations');
+
+const translations = require('./translations');
 
 let client;
 
@@ -14,24 +16,27 @@ async function main() {
   client = await initDatabase(DB_HOST, DB_PORT, DB_NAME);
 
   const col = await client.db(DB_NAME).createCollection(I18N_COL_NAME);
-  await initTranslations(col);
+  await initTranslations(col, translations);
+
+  // You can have 2 more connections to the same database in one application. so the connection above does not need to be closed. The connection above is used as an example for Graceful Shutdown concept
 
   await i18next.use(Backend).init({
     backend: {
-      client,
+      uri: `mongodb://${DB_HOST}:${DB_PORT}/${DB_NAME}`,
       dbName: DB_NAME,
       collectionName: I18N_COL_NAME,
-      persistConnection: true
-    }
+    },
   });
 
-  // Translation for en
-  const t_en = await i18next.changeLanguage('en');
-  console.log(`en => key : ${t_en('key')}`);
+  for (let i = 0; i < translations.length; i += 1) {
+    const { lang, ns, data } = translations[i];
 
-  // Translation for id
-  const t_id = await i18next.changeLanguage('id');
-  console.log(`id => key : ${t_id('key')}`);
+    const t = await i18next.changeLanguage(lang);
+
+    Object.entries(data).forEach(([key]) =>
+      console.log(`${lang} => ${ns}/${key} : ${t(`${ns}:${key}`)}`)
+    );
+  }
 }
 
 async function gracefulShutdown() {
@@ -51,11 +56,9 @@ async function gracefulShutdown() {
 }
 
 main()
-  .then(async () => {
-    console.log('Success');
-    await gracefulShutdown();
-  })
   .then(() => {
-    process.exit(0);
+    console.log('Success');
+    return gracefulShutdown();
   })
+  .then(() => process.exit(0))
   .catch(console.error);

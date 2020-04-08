@@ -98,11 +98,6 @@ debug@2.6.9:
   dependencies:
     ms "2.0.0"
 
-deep-extend@^0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/deep-extend/-/deep-extend-0.6.0.tgz#c4fa7c95404a17a9c3e8ca7e1537312b736330ac"
-  integrity sha512-LOHxIOaPYdHlJRtCQfDIVZtfw/ufM8+rVj649RIHzcm/vGwQRXFt6OPqIFWsm2XEMrNIEtWR64sY1LEKD2vAOA==
-
 denque@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/denque/-/denque-1.4.1.tgz#6744ff7641c148c3f8a69c307e51235c1f4a37cf"
@@ -231,13 +226,11 @@ i18next-express-middleware@^1.9.1:
   dependencies:
     cookies "0.7.1"
 
-i18next-node-mongo-backend@^0.0.3:
+"i18next-node-mongo-backend@file:../../nodejs/libs/i18next-node-mongo-backend":
   version "0.0.3"
-  resolved "https://registry.yarnpkg.com/i18next-node-mongo-backend/-/i18next-node-mongo-backend-0.0.3.tgz#5150599382be7b31608f55f8b5b8e8b482309e8d"
-  integrity sha512-oYug52TyE+v+A4+p95uKElSoluwd1YWtxVikpt5AhYe6R6JSxOkkbplOgxkvOzxOu+czpGNSVouYrVo5ku5jnA==
-  dependencies:
-    deep-extend "^0.6.0"
-    xtend "^4.0.2"
+
+"i18next-node-mongo-backend@file:/home/lod/Code/nodejs/libs/i18next-node-mongo-backend/":
+  version "0.0.3"
 
 i18next@^19.3.4:
   version "19.3.4"
@@ -536,8 +529,3 @@ vary@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=
-
-xtend@^4.0.2:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/xtend/-/xtend-4.0.2.tgz#bb72779f5fa465186b1f438f674fa347fdb5db54"
-  integrity sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==

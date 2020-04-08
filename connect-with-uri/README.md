@@ -1,4 +1,4 @@
-#### Example integrate `i18next-node-mongo-backend` with `express`
+#### Example initial `i18next-node-mongo-backend` with `uri` option
 
 ## Requirements
 
@@ -9,11 +9,7 @@
 
 From root project:
 
-`node with-express/app.js`
-
-Go to http://127.0.0.1:3000/ to see what happening.
-
-> Note: You can change the default configuration in `.env` file on root project
+`node connect-with-uri/app.js`
 
 ## Important
 

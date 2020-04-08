@@ -3,5 +3,7 @@
 ## Content
 
 **Sample available:**
+
 - [with-express](./with-express/README.md) - Integrate `i18next-node-mongo-backend` with `express` server
-- [with-graceful-shutdown](./with-graceful-shutdown/README.md) - Integrate `i18next-node-mongo-backend` with `i18next`
+- [connect-with-uri](./connect-with-uri/README.md) - Example initial `i18next-node-mongo-backend` with `uri` option
+- [connect-with-mongoclient](./connect-with-mongoclient/README.md) - Example initial `i18next-node-mongo-backend` with `client` option
