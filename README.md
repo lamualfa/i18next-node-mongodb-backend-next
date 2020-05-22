@@ -1,7 +1,7 @@
 [![npm](https://badgen.net/npm/v/i18next-node-mongo-backend?color=red)](https://www.npmjs.com/package/i18next-node-mongo-backend)
 [![license](https://badgen.net/npm/license/i18next-node-mongo-backend)](https://github.com/laodemalfatih/i18next-node-mongo-backend/blob/master/LICENSE)
 
-[![Build Status](https://travis-ci.com/laodemalfatih/i18next-node-mongo-backend.svg)](https://travis-ci.com/laodemalfatih/i18next-node-mongo-backend)
+[![Build Status](https://travis-ci.com/lamualfa/i18next-node-mongo-backend.svg)](https://travis-ci.com/lamualfa/i18next-node-mongo-backend)
 [![codecov](https://codecov.io/gh/laodemalfatih/i18next-node-mongo-backend/branch/master/graph/badge.svg)](https://codecov.io/gh/laodemalfatih/i18next-node-mongo-backend)
 [![Maintainability](https://api.codeclimate.com/v1/badges/5fc60912b2776f1e1a53/maintainability)](https://codeclimate.com/github/laodemalfatih/i18next-node-mongo-backend/maintainability)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
@@ -10,7 +10,9 @@
 
 # Integrate [i18next](https://github.com/i18next/i18next) with [MongoDB](https://www.mongodb.com/)
 
-<img src="assets/i18next.png" alt="I18next Logo" width="100"/><img src="assets/mongodb.png" alt="MongoDB Logo" width="330" style="margin-left: 60px;"/>
+<div align="center">
+<img src="asset/banner.png" alt="Banner"/>
+</div>
 
 # Introduction
 
