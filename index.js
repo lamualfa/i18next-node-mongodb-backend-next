@@ -64,11 +64,7 @@ class Backend {
       .createCollection(this.opts.collectionName);
   }
 
-  // i18next required methods
-
-  init(services, opts, i18nOpts) {
-    this.services = services;
-    this.i18nOpts = i18nOpts;
+  sanitizeOpts(opts) {
     this.opts = { ...defaultOpts, ...this.options, ...opts };
 
     if (this.opts.sanitizeFieldNameCharacter) {
@@ -82,19 +78,29 @@ class Backend {
         this.opts.dataFieldName,
       );
     }
+  }
 
-    if (this.opts.client) this.client = this.opts.client;
-    else {
-      this.uri =
-        this.opts.uri ||
-        `mongodb://${this.opts.host}:${this.opts.port}/${this.opts.dbName}`;
+  // i18next required methods
 
-      if (this.opts.user && this.opts.password)
-        this.opts.mongodb.auth = {
-          user: this.opts.user,
-          password: this.opts.password,
-        };
+  init(services, opts, i18nOpts) {
+    this.services = services;
+    this.i18nOpts = i18nOpts;
+    this.sanitizeOpts(opts);
+
+    if (this.opts.client) {
+      this.client = this.opts.client;
+      return;
     }
+
+    this.uri =
+      this.opts.uri ||
+      `mongodb://${this.opts.host}:${this.opts.port}/${this.opts.dbName}`;
+
+    if (this.opts.user && this.opts.password)
+      this.opts.mongodb.auth = {
+        user: this.opts.user,
+        password: this.opts.password,
+      };
   }
 
   read(lang, ns, cb) {
