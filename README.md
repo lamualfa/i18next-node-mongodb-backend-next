@@ -6,6 +6,8 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/5fc60912b2776f1e1a53/maintainability)](https://codeclimate.com/github/laodemalfatih/i18next-node-mongo-backend/maintainability)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
+## Are you a Deno user? If `true`, we provide the same library for Deno. See: [Mongo Backend for Deno](https://github.com/lamualfa/dn-i18next-mongo-backend)
+
 #### Inspired from [i18next-node-mongodb-backend](https://github.com/gian788/i18next-node-mongodb-backend) with support for `mongodb@3.5.x` and some bug fixes and more improvements
 
 # Integrate [i18next](https://github.com/i18next/i18next) with [MongoDB](https://www.mongodb.com/)
@@ -13,6 +15,7 @@
 <div align="center">
 <img src="asset/banner.png" alt="Banner"/>
 </div>
+
 
 # Introduction
 
