@@ -60,8 +60,12 @@ class Backend {
 
   getCollection(client) {
     return client
-      .db(this.opts.dbName)
-      .createCollection(this.opts.collectionName);
+      .db(this.opts.dbName).listCollections().toArray()
+        .then(res => res.some((arr) => arr.name === this.opts.collectionName))
+      ? client
+      .db(this.opts.dbName).collection(this.opts.collectionName)
+      : client
+      .db(this.opts.dbName).createCollection(this.opts.collectionName);
   }
 
   sanitizeOpts(opts) {
