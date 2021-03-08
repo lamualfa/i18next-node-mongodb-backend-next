@@ -3,13 +3,13 @@
 ## Requirements
 
 - MongoDB
-  > Note: The database must not be password. If you still need it, do your own customization directly on the code.
+  > Note: The database must not be password protected. If you require it, please modify app.js accordingly.
 
 ## Usage
 
-From root project:
-
-`node connect-with-mongoclient/app.js`
+- Ensure values in `.env` are correct
+- To get needed modules, run: `npm install`
+- From root project, run: `node connect-with-mongoclient/app.js`
 
 ## Important
 
