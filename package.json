@@ -4,7 +4,7 @@
   "license": "MIT",
   "description": "Use i18next with mongodb as backend",
   "main": "./index.js",
-  "homepage": "https://github.com/laodemalfatih/i18next-node-mongodb-backend-next",
+  "homepage": "https://github.com/lamualfa/i18next-node-mongodb-backend-next",
   "keywords": [
     "i18next",
     "mongodb",
@@ -13,10 +13,10 @@
   ],
   "author": {
     "name": "Laode Muhammad Al Fatih",
-    "url": "https://github.com/laodemalfatih"
+    "url": "https://github.com/lamualfa"
   },
   "bugs": {
-    "url": "https://github.com/laodemalfatih/i18next-node-mongodb-backend-next/issues"
+    "url": "https://github.com/lamualfa/i18next-node-mongodb-backend-next/issues"
   },
   "engines": {
     "node": ">=10"
@@ -27,7 +27,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/laodemalfatih/i18next-node-mongodb-backend-next.git"
+    "url": "https://github.com/lamualfa/i18next-node-mongodb-backend-next.git"
   },
   "devDependencies": {
     "codecov": "^3.6.5",
