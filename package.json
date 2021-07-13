@@ -4,7 +4,7 @@
     "express": "^4.17.1",
     "i18next": "^19.3.4",
     "i18next-express-middleware": "^1.9.1",
-    "i18next-node-mongo-backend": "^0.0.4",
+    "i18next-node-mongodb-backend-next": "^0.0.5",
     "mongodb": "^3.5.5"
   }
 }

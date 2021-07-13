@@ -1,23 +1,17 @@
-require('dotenv').config();
+require("dotenv").config();
 
-const {
-  DB_HOST,
-  DB_PORT,
-  DB_NAME,
-  I18N_COL_NAME,
-  SERVER_HOST,
-  SERVER_PORT,
-} = process.env;
+const { DB_HOST, DB_PORT, DB_NAME, I18N_COL_NAME, SERVER_HOST, SERVER_PORT } =
+  process.env;
 
-const express = require('express');
-const i18next = require('i18next');
-const expressMiddleware_i18next = require('i18next-express-middleware');
-const Backend = require('i18next-node-mongo-backend');
+const express = require("express");
+const i18next = require("i18next");
+const expressMiddleware_i18next = require("i18next-express-middleware");
+const Backend = require("i18next-node-mongodb-backend-next");
 
-const initDatabase = require('../libs/initDatabase');
-const initTranslations = require('../libs/initTranslations');
+const initDatabase = require("../libs/initDatabase");
+const initTranslations = require("../libs/initTranslations");
 
-const translations = require('./translations');
+const translations = require("./translations");
 
 let client;
 let server;
@@ -34,7 +28,7 @@ async function main() {
     .use(expressMiddleware_i18next.LanguageDetector)
     .use(Backend)
     .init({
-      fallbackLng: 'en',
+      fallbackLng: "en",
       backend: {
         client,
         dbName: DB_NAME,
@@ -43,7 +37,7 @@ async function main() {
     });
 
   // Server
-  console.log('Init server...');
+  console.log("Init server...");
   server = express();
   server.use(
     expressMiddleware_i18next.handle(i18next, {
@@ -51,12 +45,12 @@ async function main() {
     })
   );
 
-  server.get('/', function (req, res) {
-    res.redirect('/key');
+  server.get("/", function (req, res) {
+    res.redirect("/key");
   });
 
-  server.get('/:key', function (req, res) {
-    res.type('html').send(
+  server.get("/:key", function (req, res) {
+    res.type("html").send(
       `
       <p><b>Current language:</b> ${req.language}</p>
       <p><b>Key:</b> ${req.params.key}</p>
@@ -64,7 +58,7 @@ async function main() {
 
       <p><b>Change language:</b> ${translations
         .map(({ lang }) => `<a href="?lng=${lang}">${lang.toUpperCase()}</a>`)
-        .join('/')}</p>
+        .join("/")}</p>
     `
     );
   });
@@ -77,30 +71,30 @@ async function main() {
 async function gracefulShutdown() {
   try {
     if (server) {
-      console.log('Shutdown server...');
+      console.log("Shutdown server...");
       await new Promise((resolve) =>
         server.close(() => {
           resolve();
         })
       );
-      console.log('Server has been shutdown');
+      console.log("Server has been shutdown");
     }
 
     if (client && client.isConnected()) {
-      console.log('Disconnect database...');
+      console.log("Disconnect database...");
       await client.close();
-      console.log('Database disconnected');
+      console.log("Database disconnected");
     }
 
     process.exit(0);
   } catch (error) {
     console.error(error);
-    console.error('Error graceful shutdown');
+    console.error("Error graceful shutdown");
     process.exit(1);
   }
 }
 
-process.on('SIGTERM', gracefulShutdown);
-process.on('SIGINT', gracefulShutdown);
+process.on("SIGTERM", gracefulShutdown);
+process.on("SIGINT", gracefulShutdown);
 
 main().catch(console.error);

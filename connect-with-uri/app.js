@@ -1,14 +1,14 @@
-require('dotenv').config();
+require("dotenv").config();
 
 const { DB_HOST, DB_PORT, DB_NAME, I18N_COL_NAME } = process.env;
 
-const i18next = require('i18next');
-const Backend = require('i18next-node-mongo-backend');
+const i18next = require("i18next");
+const Backend = require("i18next-node-mongodb-backend-next");
 
-const initDatabase = require('../libs/initDatabase');
-const initTranslations = require('../libs/initTranslations');
+const initDatabase = require("../libs/initDatabase");
+const initTranslations = require("../libs/initTranslations");
 
-const translations = require('./translations');
+const translations = require("./translations");
 
 let client;
 
@@ -42,22 +42,22 @@ async function main() {
 async function gracefulShutdown() {
   try {
     if (client && client.isConnected()) {
-      console.log('Disconnect database...');
+      console.log("Disconnect database...");
       await client.close();
-      console.log('Database disconnected');
+      console.log("Database disconnected");
     }
 
     process.exit(0);
   } catch (error) {
     console.error(error);
-    console.error('Error graceful shutdown');
+    console.error("Error graceful shutdown");
     process.exit(1);
   }
 }
 
 main()
   .then(() => {
-    console.log('Success');
+    console.log("Success");
     return gracefulShutdown();
   })
   .then(() => process.exit(0))

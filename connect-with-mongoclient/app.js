@@ -3,7 +3,7 @@ require('dotenv').config();
 const { DB_HOST, DB_PORT, DB_NAME, I18N_COL_NAME } = process.env;
 
 const i18next = require('i18next');
-const Backend = require('i18next-node-mongo-backend');
+const Backend = require('i18next-node-mongodb-backend-next');
 
 const initDatabase = require('../libs/initDatabase');
 const initTranslations = require('../libs/initTranslations');
