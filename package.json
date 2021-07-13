@@ -1,10 +1,10 @@
 {
-  "name": "i18next-node-mongo-backend",
+  "name": "i18next-node-mongodb-backend-next",
   "version": "0.0.5",
   "license": "MIT",
   "description": "Use i18next with mongodb as backend",
   "main": "./index.js",
-  "homepage": "https://github.com/laodemalfatih/i18next-node-mongo-backend",
+  "homepage": "https://github.com/laodemalfatih/i18next-node-mongodb-backend-next",
   "keywords": [
     "i18next",
     "mongodb",
@@ -16,7 +16,7 @@
     "url": "https://github.com/laodemalfatih"
   },
   "bugs": {
-    "url": "https://github.com/laodemalfatih/i18next-node-mongo-backend/issues"
+    "url": "https://github.com/laodemalfatih/i18next-node-mongodb-backend-next/issues"
   },
   "engines": {
     "node": ">=10"
@@ -27,7 +27,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/laodemalfatih/i18next-node-mongo-backend.git"
+    "url": "https://github.com/laodemalfatih/i18next-node-mongodb-backend-next.git"
   },
   "devDependencies": {
     "codecov": "^3.6.5",

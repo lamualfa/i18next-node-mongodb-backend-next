@@ -1,9 +1,9 @@
-[![npm](https://badgen.net/npm/v/i18next-node-mongo-backend?color=red)](https://www.npmjs.com/package/i18next-node-mongo-backend)
-[![license](https://badgen.net/github/license/lamualfa/i18next-node-mongo-backend?color=purple)](https://github.com/lamualfa/i18next-node-mongo-backend/blob/master/LICENSE)
+[![npm](https://badgen.net/npm/v/i18next-node-mongodb-backend-next?color=red)](https://www.npmjs.com/package/i18next-node-mongodb-backend-next)
+[![license](https://badgen.net/github/license/lamualfa/i18next-node-mongodb-backend-next?color=purple)](https://github.com/lamualfa/i18next-node-mongodb-backend-next/blob/master/LICENSE)
 
-[![Build Status](https://travis-ci.com/lamualfa/i18next-node-mongo-backend.svg)](https://travis-ci.com/lamualfa/i18next-node-mongo-backend)
-[![codecov](https://codecov.io/gh/lamualfa/i18next-node-mongo-backend/branch/master/graph/badge.svg)](https://codecov.io/gh/lamualfa/i18next-node-mongo-backend)
-[![Maintainability](https://api.codeclimate.com/v1/badges/5fc60912b2776f1e1a53/maintainability)](https://codeclimate.com/github/lamualfa/i18next-node-mongo-backend/maintainability)
+[![Build Status](https://travis-ci.com/lamualfa/i18next-node-mongodb-backend-next.svg)](https://travis-ci.com/lamualfa/i18next-node-mongodb-backend-next)
+[![codecov](https://codecov.io/gh/lamualfa/i18next-node-mongodb-backend-next/branch/master/graph/badge.svg)](https://codecov.io/gh/lamualfa/i18next-node-mongodb-backend-next)
+[![Maintainability](https://api.codeclimate.com/v1/badges/5fc60912b2776f1e1a53/maintainability)](https://codeclimate.com/github/lamualfa/i18next-node-mongodb-backend-next/maintainability)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
 ## Are you a Deno user? If `true`, we provide the same library for Deno. See: [Mongo Backend for Deno](https://github.com/lamualfa/dn-i18next-mongo-backend) 🦖
@@ -24,18 +24,18 @@ This is a [i18next](https://github.com/i18next/i18next) backend to be used Node 
 # Getting started
 
 ```bash
-yarn add mongodb i18next-node-mongo-backend
+yarn add mongodb i18next-node-mongodb-backend-next
 # or
-npm install mongodb i18next-node-mongo-backend
+npm install mongodb i18next-node-mongodb-backend-next
 ```
 
-> Important: This library doesn't include `mongodb` library. You have to install it yourself
+> Important: This library doesn't include `mongodb` library. You have to install it yourself.
 
 # Usage
 
 ```js
 const i18next = require('i18next');
-const Backend = require('i18next-node-mongo-backend');
+const Backend = require('i18next-node-mongodb-backend-next');
 
 i18next.use(Backend).init({
   // Backend Options
@@ -137,7 +137,7 @@ If you already have your own connection, use this to avoid useless connections
 }
 ```
 
-## Visit [here](https://github.com/lamualfa/i18next-node-mongo-backend/tree/v0.0.4-examples) for more example usage
+## Visit [here](https://github.com/lamualfa/i18next-node-mongodb-backend-next/tree/v0.0.4-examples) for more example usage
 
 # Change Log:
 
