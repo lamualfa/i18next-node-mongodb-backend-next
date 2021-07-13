@@ -139,7 +139,7 @@ If you already have your own connection, use this to avoid useless connections
 }
 ```
 
-## Visit [here](https://github.com/lamualfa/i18next-node-mongodb-backend-next/tree/v0.0.4-examples) for more example usage
+## Visit [here](https://github.com/lamualfa/i18next-node-mongodb-backend-next/tree/v0.x-examples) for more example usage
 
 # Change Log:
 
