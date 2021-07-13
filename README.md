@@ -21,7 +21,7 @@
 
 This is a [i18next](https://github.com/i18next/i18next) backend to be used Node JS. It will load resources from a [MongoDB](https://www.mongodb.org) database with official node mongodb [driver](https://mongodb.github.io/node-mongodb-native/3.5/).
 
-> Prevously is **i18next-node-mongo-backend**. Because i lost my NPM account, the package is renamed to **i18next-node-mongodb-backend-next**.
+> Prevously is **i18next-node-mongo-backend**. Because i lost my NPM account, the package was renamed to **i18next-node-mongodb-backend-next**.
 
 # Getting started
 
@@ -146,7 +146,7 @@ If you already have your own connection, use this to avoid useless connections
 ### v0.0.5 _(13-07-21)_:
 
 - Package renamed to `i18next-node-mongodb-backend-next` 
-- Fix [#9: error collection already exists](https://github.com/lamualfa/i18next-node-mongodb-backend-next/pull/9)
+- Fix [#9 - error collection already exists](https://github.com/lamualfa/i18next-node-mongodb-backend-next/pull/9)
 
 ### v0.0.4 _(08-04-20)_:
 
