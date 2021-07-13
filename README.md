@@ -1,7 +1,7 @@
 [![npm](https://badgen.net/npm/v/i18next-node-mongodb-backend-next?color=red)](https://www.npmjs.com/package/i18next-node-mongodb-backend-next)
 [![license](https://badgen.net/github/license/lamualfa/i18next-node-mongodb-backend-next?color=purple)](https://github.com/lamualfa/i18next-node-mongodb-backend-next/blob/master/LICENSE)
 
-[![Build Status](https://travis-ci.com/lamualfa/i18next-node-mongodb-backend-next.svg)](https://travis-ci.com/lamualfa/i18next-node-mongodb-backend-next)
+[![Build Status](https://travis-ci.com/lamualfa/i18next-node-mongodb-backend-next.svg?branch=master)](https://travis-ci.com/lamualfa/i18next-node-mongodb-backend-next)
 [![codecov](https://codecov.io/gh/lamualfa/i18next-node-mongodb-backend-next/branch/master/graph/badge.svg)](https://codecov.io/gh/lamualfa/i18next-node-mongodb-backend-next)
 [![Maintainability](https://api.codeclimate.com/v1/badges/5fc60912b2776f1e1a53/maintainability)](https://codeclimate.com/github/lamualfa/i18next-node-mongodb-backend-next/maintainability)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
