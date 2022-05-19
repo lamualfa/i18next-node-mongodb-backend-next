@@ -1,4 +1,2 @@
 node_modules
-coverage
-local
-yarn-error.log
+globalConfig.json
