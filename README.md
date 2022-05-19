@@ -63,8 +63,8 @@ i18next.use(Backend).init({
   client: new MongoClient(), // work with connected client or not
 
   // MongoDB authentication. Remove it if not needed
+  // Choose one, `user` or `username`. Both are the same.
   user: '<DB User>',
-  // Also you can use `username` for newer MongoDB version
   username: '<DB User>',
   password: '<DB Password>',
 
