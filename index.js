@@ -30,7 +30,8 @@ class Backend {
    * @param {string} opts.host MongoDB Host
    * @param {number} opts.port MongoDB Port
    * @param {MongoClient} opts.client Use your custom `MongoClient` instance. Example: `new MongoClient()`
-   * @param {string} [opts.user] MongoDB User
+   * @param {string} [opts.username] MongoDB Username
+   * @param {string} [opts.user] MongoDB Username
    * @param {string} [opts.password] MongoDB Password
    * @param {string} opts.dbName Database name for storing i18next data
    * @param {string} [opts.collectionName="i18n"] Collection name for storing i18next data
@@ -113,9 +114,10 @@ class Backend {
       this.opts.uri ||
       `mongodb://${this.opts.host}:${this.opts.port}/${this.opts.dbName}`;
 
-    if (this.opts.user && this.opts.password)
+    if ((this.opts.user || this.opts.username) && this.opts.password)
       this.opts.mongodb.auth = {
         user: this.opts.user,
+        username: this.opts.username,
         password: this.opts.password,
       };
   }
