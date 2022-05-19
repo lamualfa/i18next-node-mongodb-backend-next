@@ -30,6 +30,7 @@
     "url": "https://github.com/lamualfa/i18next-node-mongodb-backend-next.git"
   },
   "devDependencies": {
+    "@shelf/jest-mongodb": "^2.2.2",
     "codecov": "^3.6.5",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.1.0",
