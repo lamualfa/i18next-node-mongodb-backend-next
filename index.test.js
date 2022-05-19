@@ -2,18 +2,16 @@ const { MongoClient } = require('mongodb');
 
 const Backend = require('./index');
 
-const host = '127.0.0.1';
-const port = 27017;
-const user = 'test';
-const password = 'test';
-const dbName = 'test';
+// eslint-disable-next-line
+const uri = globalThis.__MONGO_URI__;
+// eslint-disable-next-line
+const dbName = globalThis.__MONGO_DB_NAME__;
 const collectionName = 'i18n';
 
 // Use custom
 const languageFieldName = 'lng';
 const namespaceFieldName = 'nas';
 const dataFieldName = 'dat';
-
 const translations = [
   {
     [languageFieldName]: 'en',
@@ -45,12 +43,9 @@ const translations = [
   },
 ];
 
-const client = new MongoClient(`mongodb://${host}:${port}/${dbName}`, {
+const client = new MongoClient(uri, {
+  useNewUrlParser: true,
   useUnifiedTopology: true,
-  auth: {
-    user,
-    password,
-  },
 });
 
 function asyncify(backend, method, ...params) {
@@ -136,7 +131,7 @@ beforeAll(async () => {
 beforeEach(async () => {
   const updateTasks = [];
 
-  const collection = await client.db(dbName).collection(collectionName);
+  const collection = client.db(dbName).collection(collectionName);
 
   for (let i = 0; i < translations.length; i += 1) {
     const translation = translations[i];
@@ -163,11 +158,11 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
-  // await emptyCollection();
+  await emptyCollection();
 });
 
 afterAll(async () => {
-  // await client.db(dbName).dropCollection(collectionName);
+  await client.db(dbName).dropCollection(collectionName);
   await client.close();
 });
 
@@ -201,10 +196,7 @@ describe('with custom MongoClient', () => {
 
 describe('with standard config', () => {
   const backend = new Backend(null, {
-    host,
-    port,
-    user,
-    password,
+    uri,
     dbName,
     collectionName,
     languageFieldName,

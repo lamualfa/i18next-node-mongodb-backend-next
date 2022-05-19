@@ -1,6 +1,6 @@
 {
   "name": "i18next-node-mongodb-backend-next",
-  "version": "0.0.5",
+  "version": "1.0.0",
   "license": "MIT",
   "description": "Use i18next with mongodb as backend",
   "main": "./index.js",
@@ -38,7 +38,7 @@
     "eslint-plugin-jest": "^23.8.2",
     "eslint-plugin-prettier": "^3.1.2",
     "jest": "^25.2.7",
-    "mongodb": "^3.5.5",
+    "mongodb": "^4.6.0",
     "prettier": "^2.0.2"
   }
 }

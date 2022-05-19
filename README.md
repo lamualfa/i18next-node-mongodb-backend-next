@@ -2,8 +2,6 @@
 [![license](https://badgen.net/github/license/lamualfa/i18next-node-mongodb-backend-next?color=purple)](https://github.com/lamualfa/i18next-node-mongodb-backend-next/blob/master/LICENSE)
 
 [![Build Status](https://travis-ci.com/lamualfa/i18next-node-mongodb-backend-next.svg?branch=master)](https://travis-ci.com/lamualfa/i18next-node-mongodb-backend-next)
-[![codecov](https://codecov.io/gh/lamualfa/i18next-node-mongodb-backend-next/branch/master/graph/badge.svg)](https://codecov.io/gh/lamualfa/i18next-node-mongodb-backend-next)
-[![Maintainability](https://api.codeclimate.com/v1/badges/5fc60912b2776f1e1a53/maintainability)](https://codeclimate.com/github/lamualfa/i18next-node-mongodb-backend-next/maintainability)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
 ## Are you a Deno user? If `true`, we provide the same library for Deno. See: [Mongo Backend for Deno](https://github.com/lamualfa/dn-i18next-mongo-backend) 🦖
@@ -15,7 +13,6 @@
 <div align="center">
 <img src="asset/banner.png" alt="Banner"/>
 </div>
-
 
 # Introduction
 
@@ -145,7 +142,7 @@ If you already have your own connection, use this to avoid useless connections
 
 ### v0.0.5 _(13-07-21)_:
 
-- Package renamed to `i18next-node-mongodb-backend-next` 
+- Package renamed to `i18next-node-mongodb-backend-next`
 - Fix [#9 - error collection already exists](https://github.com/lamualfa/i18next-node-mongodb-backend-next/pull/9)
 
 ### v0.0.4 _(08-04-20)_:

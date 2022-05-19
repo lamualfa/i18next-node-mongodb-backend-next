@@ -50,22 +50,35 @@ class Backend {
 
   // Private methods
 
-  getClient() {
-    if (this.client)
-      return this.client.isConnected()
-        ? Promise.resolve(this.client)
-        : this.client.connect();
-    return MongoClient.connect(this.uri, this.opts.mongodb);
+  async getClient() {
+    const client = this.client || new MongoClient(this.uri, this.opts.mongodb);
+    if (!client.isConnected || !client.isConnected()) {
+      await client.connect();
+    }
+    return client;
   }
 
-  getCollection(client) {
-    return client
+  async closeClientIfNeeded(client) {
+    if (this.client) return;
+
+    await client.close();
+  }
+
+  async getCollection(client) {
+    const collections = await client
       .db(this.opts.dbName)
       .listCollections()
-      .toArray()
-      .then((res) => res.some((arr) => arr.name === this.opts.collectionName))
-      ? client.db(this.opts.dbName).collection(this.opts.collectionName)
-      : client.db(this.opts.dbName).createCollection(this.opts.collectionName);
+      .toArray();
+    const isCollectionExists = collections.some(
+      (collection) => collection.name === this.opts.collectionName,
+    );
+    if (isCollectionExists) {
+      return client.db(this.opts.dbName).collection(this.opts.collectionName);
+    }
+
+    return client
+      .db(this.opts.dbName)
+      .createCollection(this.opts.collectionName);
   }
 
   sanitizeOpts(opts) {
@@ -107,96 +120,101 @@ class Backend {
       };
   }
 
-  read(lang, ns, cb) {
+  async read(lang, ns, cb) {
     if (!cb) return;
 
-    this.getClient()
-      .then(async (client) => {
-        const col = await this.getCollection(client);
+    const client = await this.getClient();
+    try {
+      const col = await this.getCollection(client);
+      const doc = await col.findOne(
+        {
+          [this.opts.languageFieldName]: lang,
+          [this.opts.namespaceFieldName]: ns,
+        },
+        {
+          [this.opts.dataFieldName]: true,
+        },
+      );
 
-        const doc = await col.findOne(
-          {
-            [this.opts.languageFieldName]: lang,
-            [this.opts.namespaceFieldName]: ns,
-          },
-          {
-            [this.opts.dataFieldName]: true,
-          },
-        );
-
-        // If `this.client` exists (equal to if use custom MongoClient), don't close connection
-        if (!this.client && client.isConnected()) await client.close();
-        cb(null, (doc && doc[this.opts.dataFieldName]) || {});
-      })
-      .catch(this.opts.readOnError);
+      cb(null, (doc && doc[this.opts.dataFieldName]) || {});
+    } catch (error) {
+      this.opts.readOnError(error);
+      cb(error);
+    } finally {
+      await this.closeClientIfNeeded(client);
+    }
   }
 
-  readMulti(langs, nss, cb) {
+  async readMulti(langs, nss, cb) {
     if (!cb) return;
 
-    this.getClient()
-      .then(async (client) => {
-        const col = await this.getCollection(client);
+    const client = await this.getClient();
+    try {
+      const col = await this.getCollection(client);
 
-        const docs = await col
-          .find({
-            [this.opts.languageFieldName]: { $in: langs },
-            [this.opts.namespaceFieldName]: { $in: nss },
-          })
-          .toArray();
+      const docs = await col
+        .find({
+          [this.opts.languageFieldName]: { $in: langs },
+          [this.opts.namespaceFieldName]: { $in: nss },
+        })
+        .toArray();
 
-        const parsed = {};
+      const parsed = {};
 
-        for (let i = 0; i < docs.length; i += 1) {
-          const doc = docs[i];
-          const lang = doc[this.opts.languageFieldName];
-          const ns = doc[this.opts.namespaceFieldName];
-          const data = doc[this.opts.dataFieldName];
+      for (let i = 0; i < docs.length; i += 1) {
+        const doc = docs[i];
+        const lang = doc[this.opts.languageFieldName];
+        const ns = doc[this.opts.namespaceFieldName];
+        const data = doc[this.opts.dataFieldName];
 
-          if (!parsed[lang]) {
-            parsed[lang] = {};
-          }
-
-          parsed[lang][ns] = data;
+        if (!parsed[lang]) {
+          parsed[lang] = {};
         }
 
-        // If `this.client` exists (equal to if use custom MongoClient), don't close connection
-        if (!this.client && client.isConnected()) await client.close();
-        cb(null, parsed);
-      })
-      .catch(this.opts.readMultiOnError);
+        parsed[lang][ns] = data;
+      }
+
+      cb(null, parsed);
+    } catch (error) {
+      this.opts.readMultiOnError(error);
+      cb(error);
+    } finally {
+      await this.closeClientIfNeeded(client);
+    }
   }
 
-  create(langs, ns, key, fallbackVal, cb) {
-    this.getClient()
-      .then(async (client) => {
-        const col = await this.getCollection(client);
+  async create(langs, ns, key, fallbackVal, cb) {
+    const client = await this.getClient();
+    try {
+      const col = await this.getCollection(client);
 
-        // Make `updateOne` process run concurrently
-        await Promise.all(
-          (typeof langs === 'string' ? [langs] : langs).map((lang) =>
-            col.updateOne(
-              {
-                [this.opts.languageFieldName]: lang,
-                [this.opts.namespaceFieldName]: ns,
+      // Make `updateOne` process run concurrently
+      await Promise.all(
+        (typeof langs === 'string' ? [langs] : langs).map((lang) =>
+          col.updateOne(
+            {
+              [this.opts.languageFieldName]: lang,
+              [this.opts.namespaceFieldName]: ns,
+            },
+            {
+              $set: {
+                [`${this.opts.dataFieldName}.${key}`]: fallbackVal,
               },
-              {
-                $set: {
-                  [`${this.opts.dataFieldName}.${key}`]: fallbackVal,
-                },
-              },
-              {
-                upsert: true,
-              },
-            ),
+            },
+            {
+              upsert: true,
+            },
           ),
-        );
+        ),
+      );
 
-        // If `this.client` exists (equal to if use custom MongoClient), don't close connection
-        if (!this.client && client.isConnected()) await client.close();
-        if (cb) cb();
-      })
-      .catch(this.opts.createOnError);
+      cb();
+    } catch (error) {
+      this.opts.createOnError(error);
+      cb(error);
+    } finally {
+      await this.closeClientIfNeeded(client);
+    }
   }
 }
 
