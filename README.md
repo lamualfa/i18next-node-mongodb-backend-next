@@ -146,12 +146,12 @@ If you already have your own connection, use this to avoid useless connections
 - Refactor the entire codebase
 - Testing improvement
 
-### v0.0.5 (_13-07-21_):
+### v0.0.5 (_13-07-2021_):
 
 - Package renamed to `i18next-node-mongodb-backend-next`
 - Fix [#9 - error collection already exists](https://github.com/lamualfa/i18next-node-mongodb-backend-next/pull/9)
 
-### v0.0.4 (_08-04-20_):
+### v0.0.4 (_08-04-2020_):
 
 - Critical bug fixed
 - Remove `persistConnection` option
