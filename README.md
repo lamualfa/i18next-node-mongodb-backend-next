@@ -139,7 +139,7 @@ If you already have your own connection, use this to avoid useless connections
 
 # Changelog:
 
-### v1.0.0 (_19-05-2021_)
+### v1.0.0 (_19-05-2022_)
 
 - Add support to `mongodb` v4 https://github.com/lamualfa/i18next-node-mongodb-backend-next/issues/18
 - Refactor the entire codebase
