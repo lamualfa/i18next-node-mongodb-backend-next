@@ -64,6 +64,8 @@ i18next.use(Backend).init({
 
   // MongoDB authentication. Remove it if not needed
   user: '<DB User>',
+  // Also you can use `username` for newer MongoDB version
+  username: '<DB User>',
   password: '<DB Password>',
 
   // Collection name in database will be used to store i18next data

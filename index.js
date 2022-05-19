@@ -114,10 +114,11 @@ class Backend {
       this.opts.uri ||
       `mongodb://${this.opts.host}:${this.opts.port}/${this.opts.dbName}`;
 
-    if ((this.opts.user || this.opts.username) && this.opts.password)
+    const username = this.opts.user || this.opts.username;
+    if (username && this.opts.password)
       this.opts.mongodb.auth = {
-        user: this.opts.user,
-        username: this.opts.username,
+        user: username,
+        username,
         password: this.opts.password,
       };
   }
