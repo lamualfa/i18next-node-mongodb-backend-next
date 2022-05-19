@@ -1,6 +1,5 @@
 [![npm](https://badgen.net/npm/v/i18next-node-mongodb-backend-next?color=red)](https://www.npmjs.com/package/i18next-node-mongodb-backend-next)
 [![license](https://badgen.net/github/license/lamualfa/i18next-node-mongodb-backend-next?color=purple)](https://github.com/lamualfa/i18next-node-mongodb-backend-next/blob/master/LICENSE)
-
 [![Build Status](https://travis-ci.com/lamualfa/i18next-node-mongodb-backend-next.svg?branch=master)](https://travis-ci.com/lamualfa/i18next-node-mongodb-backend-next)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
