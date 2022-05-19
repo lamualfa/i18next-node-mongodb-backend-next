@@ -125,7 +125,6 @@ If you already have your own connection, use this to avoid useless connections
 ## Example of the MongoDB document that will be created:
 
 ```json
-// Key name is according to provided in options
 {
   "lang": "en-US",
   "ns": "translations",
@@ -134,6 +133,8 @@ If you already have your own connection, use this to avoid useless connections
   }
 }
 ```
+
+> Key name is according to provided in options
 
 ## Visit [here](https://github.com/lamualfa/i18next-node-mongodb-backend-next/tree/v0.x-examples) for more example usage
 
