@@ -11,7 +11,7 @@
 # Integrate [i18next](https://github.com/i18next/i18next) with [MongoDB](https://www.mongodb.com/)
 
 <div align="center">
-<img src="asset/banner.png" alt="Banner"/>
+<img src="assets/banner.png" alt="Banner"/>
 </div>
 
 # Introduction
