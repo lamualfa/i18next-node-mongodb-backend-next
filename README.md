@@ -138,20 +138,26 @@ If you already have your own connection, use this to avoid useless connections
 
 ## Visit [here](https://github.com/lamualfa/i18next-node-mongodb-backend-next/tree/v0.x-examples) for more example usage
 
-# Change Log:
+# Changelog:
 
-### v0.0.5 _(13-07-21)_:
+### v1.0.0 (_19-05-2021_)
+
+- Add support to `mongodb` v4 https://github.com/lamualfa/i18next-node-mongodb-backend-next/issues/18
+- Refactor the entire codebase
+- Testing improvement
+
+### v0.0.5 (_13-07-21_):
 
 - Package renamed to `i18next-node-mongodb-backend-next`
 - Fix [#9 - error collection already exists](https://github.com/lamualfa/i18next-node-mongodb-backend-next/pull/9)
 
-### v0.0.4 _(08-04-20)_:
+### v0.0.4 (_08-04-20_):
 
 - Critical bug fixed
 - Remove `persistConnection` option
 - Rename `filterFieldNameCharacter` option to `sanitizeFieldNameCharacter`
 
-### v0.0.3 _(DEPRECATED)_:
+### v0.0.3 (_DEPRECATED_):
 
 - Add testing code with [Jest](https://jestjs.io/)
 - Add [JSDOC](https://jsdoc.app/)
