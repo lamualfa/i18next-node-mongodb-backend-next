@@ -211,10 +211,10 @@ class Backend {
         ),
       );
 
-      cb();
+      if (cb) cb();
     } catch (error) {
       this.opts.createOnError(error);
-      cb(error);
+      if (cb) cb(error);
     } finally {
       await this.closeClientIfNeeded(client);
     }
