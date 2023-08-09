@@ -211,7 +211,7 @@ class Backend {
         ),
       );
 
-      if (cb) cb();
+      if (cb && typeof cb === 'function') cb();
     } catch (error) {
       this.opts.createOnError(error);
       if (cb) cb(error);
